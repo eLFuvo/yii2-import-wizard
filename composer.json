@@ -16,22 +16,11 @@
       "email": "elfuvo@gmail.com"
     }
   ],
-  "repositories": [
-    {
-      "type": "composer",
-      "url": "https://asset-packagist.org"
-    },
-    {
-      "type": "composer",
-      "url": "https://packagist.dev-vps.ru"
-    }
-  ],
   "require": {
     "php": ">=7.1.0",
     "yiisoft/yii2": "~2.0.12",
     "phpoffice/phpspreadsheet": "~1.5.2",
-    "yiisoft/yii2-queue": "~2.0.0",
-    "yii2-developer/yii2-queue": "~0.1.0"
+    "yiisoft/yii2-queue": "~2.0.0"
   },
   "autoload": {
     "psr-4": {

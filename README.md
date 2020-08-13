@@ -6,13 +6,13 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
-php composer.phar require --prefer-dist elfuvo/yii2-import "~0.0.2"
+php composer.phar require --prefer-dist elfuvo/yii2-import "~0.0.1"
 ```
 
 or add
 
 ```
-"elfuvo/yii2-import": "~0.0.2"
+"elfuvo/yii2-import-wizard": "~0.0.1"
 ```
 
 to the require section of your `composer.json` file.
@@ -20,8 +20,7 @@ to the require section of your `composer.json` file.
 Configure
 ---------
 
-Настройте желаемый вариант хранения результата импорта и доступные адаптеры импорта в
-common.php
+Configure the desired storage option for the import result and the available import adapters
 
 ```php
 'definitions' => [
@@ -38,7 +37,7 @@ common.php
 ],
 ```
 
-Настройте actions в контролере бэкенда:
+Add the import steps actions to the controller:
 
 ```php
     /**
@@ -62,9 +61,6 @@ common.php
                 'previousAction' => 'upload-file-import', // previous action name
                 'excludeAttributes' => [ // exclude model attributes for building import map
                     'id',
-                    'serviceId',
-                    'stationId',
-                    'authorPhoto',
                     'language',
                     'createdBy',
                     'createdAt',
@@ -75,45 +71,19 @@ common.php
     }
 ```
 
-Необходимо тщательно проработать валидацию модели, т.к. плохая валидация 
-может привести к вставке неправильных данных (например дата из Excel не может 
-быть вставлена как дата в MySql) и ошибкам вставки данных в БД.
-Также правила валидации устанавливают автоматически тип конвертации данных 
-импорта в значение атрибута модели. 
-
-Добавьте права в менджер доступов console.php
+Add the import link button to the view:
 
 ```php
-                [
-                    'name' => 'review',
-                    'controllers' => [
-                        'default' => [
-                            'index',
-                            'create',
-                            'update',
-                            'delete',
-                            'view',
-                            'upload-file-import',
-                            'setup-import',
-                        ],
-                    ],
-                ],
+    <?= Html::a('Upload Excel file for import', ['upload-file-import'], [
+         'class' => 'btn btn-primary'
+    ]) ?>
 ```
 
-Добавьте кнопку-ссылку импорта в index вид:
 
-```html
-    <div class="card-header">
-        <p>
-            <?= Html::a(Yii::t('system', 'Create'), ['create'], [
-                'class' => 'btn btn-success'
-            ]) ?>
-            <?= Html::a('Импортировать из файла', ['upload-file-import'], [
-                'class' => 'btn btn-primary'
-            ]) ?>
-        </p>
-    </div>
-```
+It is necessary to carefully consider the validation of the model, 
+as bad validation may lead to incorrect data insertion 
+(for example: a date from Excel cannot be inserted as a date in MySql) and errors when inserting data into the database.
+Also, the validation rules set automatically the type of conversion of import data to the value of the model attribute.
 
-Yii2 queue must be configured for pushing ImportJob.
+Yii2 queue component must be configured for executing ImportJob.
 
