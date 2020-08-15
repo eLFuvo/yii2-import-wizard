@@ -1,5 +1,12 @@
 <?php
 /**
+ * Created by PhpStorm
+ * User: elfuvo
+ * Date: 2020-08-14
+ * Time: 21:32
+ */
+
+/**
  * Created by PhpStorm.
  * User: elfuvo
  * Date: 26.04.19
@@ -23,12 +30,12 @@ use yii\web\Controller;
  * Class SetupImportAction
  * @package elfuvo\import\actions
  */
-class SetupImportAction extends Action
+class SetupAction extends Action
 {
     /**
      * @var string
      */
-    public $view = '@vendor/elfuvo/yii2-import-wizard/src/views/setup';
+    public $view = '@elfuvo/yii2-import-wizard/src/views/setup';
 
     /**
      * @var Model
@@ -134,6 +141,10 @@ class SetupImportAction extends Action
             $this->service->getResult()->setProgressDone($adapter->getStartRowIndex());
             if (Model::loadMultiple($mapAttribute, Yii::$app->request->post()) &&
                 Model::validateMultiple($mapAttribute)) {
+                $mapAttribute = array_filter($mapAttribute, function (MapAttribute $attribute) {
+                    return !empty($attribute->attribute) && $attribute->attribute != MapAttribute::IGNORE_COLUMN;
+                });
+
                 $this->service->setMap($mapAttribute)
                     ->setAdapter($adapter);
                 // save statistic: total/done rows
@@ -147,19 +158,22 @@ class SetupImportAction extends Action
                     'mapAttribute' => $mapAttribute,
                     'model' => $this->model,
                 ]);
-                // create job for import
                 Yii::$app->queue->push($importJob);
 
                 return $this->controller->redirect([$this->previousAction]);
             }
         }
 
-        $attributes = ['' => ''];
+        $attributes = ['' => '', MapAttribute::IGNORE_COLUMN => Yii::t('import-wizard', 'Ignore column')];
         $attributeOptions = [
             '' => [
                 'value' => '',
                 'data-type' => '',
-            ]
+            ],
+            MapAttribute::IGNORE_COLUMN => [
+                'value' => MapAttribute::IGNORE_COLUMN,
+                'data-type' => '',
+            ],
         ];
         foreach ($this->model->getAttributes(null, $this->excludeAttributes) as $attribute => $value) {
             $attributeOptions[$attribute] = [

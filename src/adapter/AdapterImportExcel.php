@@ -1,4 +1,10 @@
 <?php
+/**
+ * Created by PhpStorm
+ * User: elfuvo
+ * Date: 2020-08-14
+ * Time: 21:32
+ */
 
 namespace elfuvo\import\adapter;
 
@@ -71,7 +77,6 @@ class AdapterImportExcel extends AbstractImportAdapter
         $spreadsheet = $this->getReader()->load($this->filename);
         $worksheet = $spreadsheet->getActiveSheet();
         $highestColumn = $worksheet->getHighestColumn(); // e.g 'F'
-        //  $highestColumn++;
 
         //get headers (fields)
         $cols = range('A', $highestColumn);
@@ -140,7 +145,6 @@ class AdapterImportExcel extends AbstractImportAdapter
         $spreadsheet->setActiveSheetIndex($activeSheetIndex);
         $worksheet = $spreadsheet->getActiveSheet();
         $highestColumn = $worksheet->getHighestColumn(); // e.g 'F'
-        //  $highestColumn++;
 
         //get headers (fields)
         $cols = range('A', $highestColumn);

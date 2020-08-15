@@ -1,5 +1,12 @@
 <?php
 /**
+ * Created by PhpStorm
+ * User: elfuvo
+ * Date: 2020-08-14
+ * Time: 21:32
+ */
+
+/**
  * Created by PhpStorm.
  * User: elfuvo
  * Date: 19.04.19
@@ -8,6 +15,8 @@
 
 namespace elfuvo\import;
 
+use DateTime;
+use Exception;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use yii\base\InvalidArgumentException;
 use yii\base\Model;
@@ -31,17 +40,17 @@ use yii\validators\UrlValidator;
 class MapAttribute extends Model
 {
     // @see yii\behaviors\AttributeTypecastBehavior
-    const TYPE_INTEGER = 'integer';
-    const TYPE_FLOAT = 'float';
-    const TYPE_BOOLEAN = 'boolean';
-    const TYPE_STRING = 'string';
+    public const TYPE_INTEGER = 'integer';
+    public const TYPE_FLOAT = 'float';
+    public const TYPE_BOOLEAN = 'boolean';
+    public const TYPE_STRING = 'string';
     // other cast types
-    const TYPE_EMAIL = 'email';
-    const TYPE_DATE = 'date';
-    const TYPE_DATETIME = 'datetime';
-    const TYPE_URL = 'url';
+    public const TYPE_EMAIL = 'email';
+    public const TYPE_DATE = 'date';
+    public const TYPE_DATETIME = 'datetime';
+    public const TYPE_URL = 'url';
 
-    const AUTO_CASTING_VALIDATORS = [
+    protected const AUTO_CASTING_VALIDATORS = [
         self::TYPE_STRING => StringValidator::class,
         self::TYPE_FLOAT => NumberValidator::class,
         self::TYPE_DATETIME => DateValidator::class,
@@ -49,6 +58,8 @@ class MapAttribute extends Model
         self::TYPE_BOOLEAN => BooleanValidator::class,
         self::TYPE_URL => UrlValidator::class,
     ];
+
+    public const IGNORE_COLUMN = 'ignore-value';
 
     /**
      * @var int
@@ -125,15 +136,15 @@ class MapAttribute extends Model
     protected function castToDate($value)
     {
         try {
-            $dt = new \DateTime($value);
+            $dt = new DateTime($value);
             return $dt->format('Y-m-d');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // date is PhpExcel date?
             try {
                 $value = Date::excelToTimestamp($value);
-                $dt = (new \DateTime())->setTimestamp($value);
+                $dt = (new DateTime())->setTimestamp($value);
                 return $dt->format('Y-m-d');
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // do nothing
             }
         }
@@ -148,15 +159,15 @@ class MapAttribute extends Model
     protected function castToDateTime($value)
     {
         try {
-            $dt = new \DateTime($value);
+            $dt = new DateTime($value);
             return $dt->format('Y-m-d H:i:s');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // date is PhpExcel date?
             try {
                 $value = Date::excelToTimestamp($value);
-                $dt = (new \DateTime())->setTimestamp($value);
+                $dt = (new DateTime())->setTimestamp($value);
                 return $dt->format('Y-m-d H:i:s');
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // do nothing
             }
         }

@@ -1,0 +1,21 @@
+actor_suffix: Tester
+paths:
+    tests: tests
+    output: tests/_output
+    data: tests/_data
+    support: tests/_support
+    envs: tests/_envs
+extensions:
+    enabled:
+        - Codeception\Extension\RunFailed
+bootstrap: _bootstrap.php
+settings:
+    colors: true
+    memory_limit: 64M
+coverage:
+    enabled: true
+    include:
+        - src/*
+    exclude:
+        - src/assets/*
+        - src/views/*

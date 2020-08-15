@@ -1,16 +1,17 @@
 <?php
 /**
- * Created by PhpStorm.
+ * Created by PhpStorm
  * User: elfuvo
- * Date: 07.05.19
- * Time: 16:14
+ * Date: 2020-08-14
+ * Time: 21:32
  */
 
 /** @var yii\web\View $this */
 /** @var \elfuvo\import\result\ResultImportInterface $result */
 
 ?>
-<?php if ($result->getProgressTotal() && $result->getProgressDone() < $result->getProgressTotal()):
+<?php
+if ($result->getProgressTotal() && $result->getProgressDone() < $result->getProgressTotal()):
     $percentDone = $result->getProgressDone() > 0 ?
         round($result->getProgressDone() / $result->getProgressTotal() * 100) : 1;
     ?>
@@ -28,10 +29,8 @@
             </div>
         </div>
     </div>
-    <?php
-    $this->registerJs('$(window).trigger("import.stat.reload")');
-    ?>
-<?php elseif ($result->getProgressTotal() && $result->getProgressDone() == $result->getProgressTotal()): ?>
+<?php
+elseif ($result->getProgressTotal() && $result->getProgressDone() == $result->getProgressTotal()): ?>
     <div class="card-content import-done">
         <div class="well">
             <p>Данные импортированы</p>
@@ -42,7 +41,8 @@
                 <span>Проигнорировано строк: <?= $result->getCounter($result::SKIP_COUNTER); ?></span><br/>
             </p>
         </div>
-        <?php if ($result->hasErrors()): ?>
+        <?php
+        if ($result->hasErrors()): ?>
             <div class="alert alert-danger">
                 <p>
                     Ошибки:
@@ -51,6 +51,8 @@
                     <?= implode('<br />', $result->getErrors()); ?>
                 </p>
             </div>
-        <?php endif; ?>
+        <?php
+        endif; ?>
     </div>
-<?php endif; ?>
+<?php
+endif; ?>

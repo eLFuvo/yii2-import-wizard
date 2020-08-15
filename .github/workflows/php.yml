@@ -32,10 +32,10 @@ jobs:
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md
-    
+
     # codeception tests
     - name: Codeception Action
-      uses: joelwmale/codeception-action@1.0.0
+      uses: joelwmale/codeception-action@104032c6a73aa7f1ad17dc81a9eebf7d122d76b6
 
     # - name: Run test suite
     #   run: composer run-script test

@@ -1,0 +1,11 @@
+version: '3'
+services:
+    application:
+        image: nsign/php-cmf2-apache:7.1-dev
+        container_name: yii2-import
+        volumes:
+            - ./:/var/www/html
+        environment:
+            APACHE_RUN_ID: 1000
+            APACHE_RUN_USER: elfuvo
+            APACHE_RUN_GROUP: elfuvo

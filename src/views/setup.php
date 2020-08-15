@@ -1,5 +1,12 @@
 <?php
 /**
+ * Created by PhpStorm
+ * User: elfuvo
+ * Date: 2020-08-14
+ * Time: 21:32
+ */
+
+/**
  * Created by PhpStorm.
  * User: elfuvo
  * Date: 26.04.19
@@ -29,27 +36,33 @@ ImportSetupAsset::register($this);
         <h4 class="card-title"><?= Html::encode($this->title) ?></h4>
     </div>
     <div class="card-content">
-        <?php $form = ActiveForm::begin(); ?>
+        <?php
+        $form = ActiveForm::begin(['options' => ['class' => 'setup-import-form']]); ?>
 
         <table class="table">
             <thead>
             <tr>
                 <th>Колонка в файле</th>
-                <?php foreach ($header as $column => $value): ?>
-                    <td align="center"><strong><?= $column; ?></strong></td>
-                <?php endforeach; ?>
+                <?php
+                foreach ($header as $column => $value): ?>
+                    <td><strong><?= $column; ?></strong></td>
+                <?php
+                endforeach; ?>
             </tr>
             </thead>
             <tbody>
             <tr>
                 <td>1я строка импорта</td>
-                <?php foreach ($header as $column => $value): ?>
+                <?php
+                foreach ($header as $column => $value): ?>
                     <td><?= Html::encode($value); ?></td>
-                <?php endforeach; ?>
+                <?php
+                endforeach; ?>
             </tr>
             <tr>
                 <td>Поле модели для заполнения</td>
-                <?php foreach ($header as $column => $value):
+                <?php
+                foreach ($header as $column => $value):
                     $model = $mapAttribute[$column] ?? new MapAttribute();
                     ?>
                     <td class="attribute" data-id="<?= $column; ?>">
@@ -65,11 +78,13 @@ ImportSetupAsset::register($this);
                             ]
                         ); ?>
                     </td>
-                <?php endforeach; ?>
+                <?php
+                endforeach; ?>
             </tr>
             <tr>
                 <td>Преобразовать значение из импорта в</td>
-                <?php foreach ($header as $column => $value):
+                <?php
+                foreach ($header as $column => $value):
                     $model = $mapAttribute[$column] ?? new MapAttribute();
                     ?>
                     <td class="type" data-id="<?= $column; ?>">
@@ -83,11 +98,13 @@ ImportSetupAsset::register($this);
                             ]
                         ); ?>
                     </td>
-                <?php endforeach; ?>
+                <?php
+                endforeach; ?>
             </tr>
             <tr>
                 <td>Поля для идентификации модели</td>
-                <?php foreach ($header as $column => $value):
+                <?php
+                foreach ($header as $column => $value):
                     $model = $mapAttribute[$column] ?? new MapAttribute();
                     ?>
                     <td>
@@ -96,7 +113,8 @@ ImportSetupAsset::register($this);
                             '[' . $column . ']identity'
                         )->checkbox(); ?>
                     </td>
-                <?php endforeach; ?>
+                <?php
+                endforeach; ?>
             </tr>
             </tbody>
         </table>
@@ -119,7 +137,8 @@ ImportSetupAsset::register($this);
                 ['class' => 'btn btn-success']) ?>
         </div>
 
-        <?php ActiveForm::end(); ?>
+        <?php
+        ActiveForm::end(); ?>
     </div>
 
 </div>

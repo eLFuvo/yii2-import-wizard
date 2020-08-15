@@ -1,0 +1,12 @@
+# Codeception Test Suite Configuration
+
+class_name: FunctionalTester
+modules:
+    enabled:
+        - Asserts
+        - Cli
+        - PhpBrowser:
+            url: http://localhost/
+
+
+

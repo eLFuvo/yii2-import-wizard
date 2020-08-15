@@ -1,5 +1,12 @@
 <?php
 /**
+ * Created by PhpStorm
+ * User: elfuvo
+ * Date: 2020-08-14
+ * Time: 21:32
+ */
+
+/**
  * Created by PhpStorm.
  * User: elfuvo
  * Date: 26.04.19
@@ -12,9 +19,9 @@ use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var \elfuvo\import\result\ResultImportInterface $result */
-/** @var \elfuvo\import\adapter\AdapterFabricInterface $fabric */
-/** @var string $action */
+/** @var array $extensions */
+/** @var string $progressAction */
+/** @var \elfuvo\import\forms\UploadForm $uploadForm */
 
 ImportSetupAsset::register($this);
 
@@ -28,39 +35,38 @@ $this->title = 'Загрузить файл импорта';
         <h4 class="card-title"><?= Html::encode($this->title) ?></h4>
     </div>
 
-    <div class="import-progress-container" data-url="<?= Url::to(['/' . $action]) ?>">
-        <?= $this->render(
-            '_import_stat',
-            [
-                'result' => $result,
-            ]
-        ); ?>
-    </div>
-    <?php if (!$result->getProgressTotal() || $result->getProgressDone() == $result->getProgressTotal()): ?>
-        <div class="card-content">
-            <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
+    <div class="import-progress-container" data-url="<?= Url::to([$progressAction]) ?>"></div>
 
-            <div class="form-group">
-                <label for="importFile">Загрузите файл импорта
-                    (<?= implode(', ', $fabric->getFileImportExtensions()); ?>)
-                </label>
-                <?= Html::fileInput(
-                    'importFile',
-                    null,
+    <div class="card-content">
+        <?php
+        $form = ActiveForm::begin([
+            'options' => [
+                'enctype' => 'multipart/form-data',
+                'class' => 'import-form',
+            ]
+        ]); ?>
+
+        <div class="form-group">
+            <label for="importFile">
+                Загрузите файл импорта
+                (<?= implode(', ', $extensions); ?>)
+            </label>
+            <?= $form->field($uploadForm, 'file')
+                ->fileInput(
                     [
                         'class' => 'form-control',
                         'id' => 'importFile',
-                        'accept' => implode(', ', $fabric->getFileImportExtensions()),
+                        'accept' => implode(', ', $extensions),
                     ]
                 ); ?>
-            </div>
-
-            <div class="form-group">
-                <?= Html::submitButton('Загрузить файл',
-                    ['class' => 'btn btn-success']) ?>
-            </div>
-
-            <?php ActiveForm::end(); ?>
         </div>
-    <?php endif; ?>
+
+        <div class="form-group">
+            <?= Html::submitButton('Загрузить файл',
+                ['class' => 'btn btn-success']) ?>
+        </div>
+
+        <?php
+        ActiveForm::end(); ?>
+    </div>
 </div>

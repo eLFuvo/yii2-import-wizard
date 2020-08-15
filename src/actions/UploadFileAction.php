@@ -1,5 +1,12 @@
 <?php
 /**
+ * Created by PhpStorm
+ * User: elfuvo
+ * Date: 2020-08-14
+ * Time: 21:32
+ */
+
+/**
  * Created by PhpStorm.
  * User: elfuvo
  * Date: 26.04.19
@@ -9,11 +16,13 @@
 namespace elfuvo\import\actions;
 
 use elfuvo\import\adapter\AdapterFabricInterface;
+use elfuvo\import\forms\UploadForm;
 use elfuvo\import\ImportService;
 use Yii;
 use yii\base\Action;
 use yii\base\InvalidConfigException;
 use yii\base\Model;
+use yii\validators\FileValidator;
 use yii\web\Controller;
 use yii\web\UploadedFile;
 
@@ -21,17 +30,22 @@ use yii\web\UploadedFile;
  * Class UploadFileAction
  * @package elfuvo\import\actions
  */
-class UploadFileImportAction extends Action
+class UploadFileAction extends Action
 {
     /**
      * @var string
      */
-    public $view = '@vendor/elfuvo/yii2-import-wizard/src/views/upload-file';
+    public $view = '@elfuvo/yii2-import-wizard/views/upload-file';
 
     /**
      * @var string
      */
     public $nextAction = 'setup-import';
+
+    /**
+     * @var string
+     */
+    public $progressAction = 'progress';
 
     /**
      * @var Model
@@ -92,35 +106,37 @@ class UploadFileImportAction extends Action
     {
         $this->service->setModel($this->model)
             ->getResult()->getLastBatch();
+        $uploadForm = new UploadForm();
 
-        if (Yii::$app->request->getIsAjax()) {
+        $extensions = $this->fabric->getFileImportExtensions();
+        // add extensions filter
+        foreach ($uploadForm->getValidators() as $validator) {
+            if ($validator instanceof FileValidator) {
+                $validator->extensions = array_map(function ($extension) {
+                    return trim($extension, '.');
+                }, $extensions);
+                $validator->checkExtensionByMimeType = false;
+                break;
+            }
+        }
 
-            $viewPath = preg_replace('#\/([^\/]+)$#', '', $this->view);
+        if (Yii::$app->request->getIsPost()) {
+            $uploadForm->file = UploadedFile::getInstance($uploadForm, 'file');
 
-            return $this->controller->renderPartial(
-                $viewPath . '/_import_stat',
-                [
-                    'result' => $this->service->getResult(),
-                ]
-            );
-        } elseif (Yii::$app->request->post()) {
-            $file = UploadedFile::getInstanceByName('importFile');
-            if ($file && $file->tempName) {
-                if ($this->service->uploadImportFile($file, $this->model)) {
+            if ($uploadForm->validate()) {
+                if ($this->service->uploadImportFile($uploadForm->file, $this->model)) {
                     return $this->controller->redirect([$this->nextAction]);
                 }
             }
         }
 
-        $action = $this->controller->action->uniqueId;
-
         return $this->controller->render(
             $this->view,
             [
-                'result' => $this->service->getResult(),
                 'model' => $this->model,
-                'fabric' => $this->fabric,
-                'action' => $action,
+                'uploadForm' => $uploadForm,
+                'extensions' => $extensions,
+                'progressAction' => $this->progressAction,
             ]
         );
     }

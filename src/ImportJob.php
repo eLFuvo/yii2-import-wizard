@@ -1,5 +1,12 @@
 <?php
 /**
+ * Created by PhpStorm
+ * User: elfuvo
+ * Date: 2020-08-14
+ * Time: 21:32
+ */
+
+/**
  * Created by PhpStorm.
  * User: elfuvo
  * Date: 19.04.19
@@ -8,7 +15,7 @@
 
 namespace elfuvo\import;
 
-use app\extensions\import\src\exception\MemoryLimitException;
+use elfuvo\import\exception\MemoryLimitException;
 use elfuvo\import\adapter\AdapterImportInterface;
 use Yii;
 use yii\base\BaseObject;
@@ -20,9 +27,6 @@ use yii\queue\RetryableJobInterface;
 /**
  * Class ImportJob
  * @package elfuvo\import
- *
- * @property-read int $ttr
- * @property-read string|float|int $memoryLimit
  */
 class ImportJob extends BaseObject implements JobInterface, RetryableJobInterface
 {

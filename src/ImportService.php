@@ -1,5 +1,12 @@
 <?php
 /**
+ * Created by PhpStorm
+ * User: elfuvo
+ * Date: 2020-08-14
+ * Time: 21:32
+ */
+
+/**
  * Created by PhpStorm.
  * User: elfuvo
  * Date: 18.04.19
@@ -177,8 +184,8 @@ class ImportService extends BaseObject
         if (!$this->adapter) {
             throw new Exception('Adapter must be set');
         }
-        if (!$this->model) {
-            throw new Exception('Model must be set');
+        if (!$this->model instanceof ActiveRecord && !YII_ENV_TEST) {
+            throw new Exception('Model must be instance of ' . ActiveRecord::class);
         }
 
         // set progress data from last result batch
@@ -205,10 +212,11 @@ class ImportService extends BaseObject
                         }
                     }
                 }
-
+                $updateModel = false;
                 if ($existsModelConditions) {
                     $existModel = $model::findOne($existsModelConditions);
                     if ($existModel) {
+                        $updateModel = true;
                         $existModel->setAttributes($model->getAttributes());
                         $model = $existModel;
                         $existModel = $existsModelConditions = null;
@@ -216,7 +224,7 @@ class ImportService extends BaseObject
                 }
                 try {
                     if ($model->save()) {
-                        $this->getResult()->addCount($model->isNewRecord ?
+                        $this->getResult()->addCount($updateModel ?
                             ResultImportInterface::ADD_COUNTER : ResultImportInterface::UPDATE_COUNTER);
                     } else {
                         $this->getResult()->addError(implode('; ', $model->getErrorSummary(true)));
