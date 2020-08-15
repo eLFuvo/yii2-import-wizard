@@ -6,7 +6,7 @@ modules:
         - Asserts
         - Cli
         - PhpBrowser:
-            url: http://localhost/
+            url: http://localhost:8080/
 
 
 

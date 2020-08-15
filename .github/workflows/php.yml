@@ -15,8 +15,6 @@ jobs:
         run: docker ps -a
       - name: Check logs
         run: docker logs yii2-import
-      - name: Install dependencies
-        run: docker-compose exec -T application composer install
       - name: Run test suite
         run: docker-compose exec -T application vendor/bin/codecept run
       - name: Check supervisor logs

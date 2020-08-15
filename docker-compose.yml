@@ -1,13 +1,10 @@
 version: '3'
 services:
     application:
-        image: nsign/php-cmf2-apache:7.1-dev
+        build:
+            context: tests/docker
+            dockerfile: Dockerfile
         container_name: yii2-import
         volumes:
-            - ./:/var/www/html
-            - ./tests/supervisor/log:/usr/log/supervisor
-            - ./tests/supervisor/application.conf:/etc/supervisor/application.conf
-        environment:
-            APACHE_RUN_ID: 1000
-            APACHE_RUN_USER: elfuvo
-            APACHE_RUN_GROUP: elfuvo
+            - ./:/app
+        command: /app/tests/app/yii serve

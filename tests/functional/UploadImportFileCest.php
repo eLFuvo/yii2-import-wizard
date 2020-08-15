@@ -44,6 +44,9 @@ class UploadImportFileCest
      */
     public function setupImportTest(FunctionalTester $I)
     {
+        // clean up queue before pushing import job
+        $I->runShellCommand('/app/tests/app/yii queue/clear --interactive 0');
+
         $I->amOnPage('/default/setup-import');
         $I->seeElement('.attribute');
         // not configured form errors
@@ -78,6 +81,7 @@ class UploadImportFileCest
      */
     public function successSavedTest(FunctionalTester $I)
     {
+        $I->runShellCommand('/app/tests/app/yii queue/run');
         sleep(5);
         $result = new FileContinuesResultImport();
         $result->pointerPath = dirname(__DIR__) . '/app/runtime/import';

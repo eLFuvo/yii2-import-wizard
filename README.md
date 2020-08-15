@@ -1,3 +1,10 @@
+![Build](https://github.com/eLFuvo/yii2-import-wizard/workflows/Build/badge.svg)
+
+Requirements
+------------
+
+* PHP >=7.1
+
 Installation
 ------------
 
