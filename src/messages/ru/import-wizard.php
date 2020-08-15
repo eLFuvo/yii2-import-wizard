@@ -7,6 +7,7 @@
  */
 
 return [
+    'Import models from Excel file' => 'Импортировать из файла Excel',
     'Start import' => 'Импортировать',
     'File for import' => 'Файл для импорта',
     'Ignore column' => 'Не импортировать',
@@ -21,10 +22,10 @@ return [
     'Data is importing' => 'Данные импортируются',
     'Imported' => 'Импортировано',
     'Data imported' => 'Данные импортированы',
-    'Import statistics'=>'Статистика импорта',
-    'Items added'=>'Добавлено элементов',
-    'Items updated'=>'Добавлено элементов',
-    'Items deleted'=>'Добавлено элементов',
-    'Ignored lines'=>'Добавлено элементов',
-    'Errors'=>'Ошибки',
+    'Import statistics' => 'Статистика импорта',
+    'Items added' => 'Добавлено элементов',
+    'Items updated' => 'Добавлено элементов',
+    'Items deleted' => 'Добавлено элементов',
+    'Ignored lines' => 'Добавлено элементов',
+    'Errors' => 'Ошибки',
 ];

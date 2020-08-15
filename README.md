@@ -1,4 +1,8 @@
+[![Latest Stable Version](https://img.shields.io/packagist/v/elfuvo/yii2-import-wizard.svg)](https://packagist.org/packages/elfuvo/yii2-import-wizard) 
 ![Build](https://github.com/eLFuvo/yii2-import-wizard/workflows/Build/badge.svg)
+[![Total Downloads](https://img.shields.io/packagist/dt/elfuvo/yii2-import-wizard.svg)](https://packagist.org/packages/elfuvo/yii2-import-wizard)
+[![License](https://img.shields.io/packagist/l/elfuvo/yii2-import-wizard.svg)](https://github.com/elfuvo/yii2-import-wizard/blob/master/LICENSE)
+[![Yii2](https://img.shields.io/badge/Powered_by-Yii_Framework-green.svg?style=flat)](http://www.yiiframework.com/)
 
 Requirements
 ------------
@@ -110,7 +114,7 @@ Add the import steps actions to the controller:
 Add the import link button into the view:
 
 ```php
-    <?= Html::a('Upload Excel file for import', ['upload-file-import'], [
+    <?= Html::a(Yii::t('import-wizard', 'Import models from Excel file'), ['upload-file-import'], [
          'class' => 'btn btn-primary'
     ]) ?>
 ```
