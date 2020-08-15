@@ -1,10 +1,5 @@
 #!/bin/sh
 
-if [ ! -e /app/composer.lock ]; then
-composer install
-fi
-
-
 isCommand() {
   # Retain backwards compatibility with common CI providers,
   # see: https://github.com/composer/docker/issues/107

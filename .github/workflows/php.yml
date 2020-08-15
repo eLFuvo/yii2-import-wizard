@@ -10,6 +10,10 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Build the docker-compose stack
+        run: docker-compose -f docker-compose.yml -p yii2-import build
+      - name: Install composer packages
+        run: docker run --rm --volume $PWD:/app yii2-import_application composer install
+      - name: Build the docker-compose stack
         run: docker-compose -f docker-compose.yml up -d
       - name: Check running containers
         run: docker ps -a
