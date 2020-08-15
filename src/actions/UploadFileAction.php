@@ -35,7 +35,7 @@ class UploadFileAction extends Action
     /**
      * @var string
      */
-    public $view = '@vendor/elfuvo/yii2-import-wizard/src/iews/upload-file';
+    public $view = '@vendor/elfuvo/yii2-import-wizard/src/views/upload-file';
 
     /**
      * @var string
