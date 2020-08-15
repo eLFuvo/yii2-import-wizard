@@ -48,6 +48,26 @@ Configure the desired storage option for the import result and the available imp
 ];
 ```
 
+Add translations to i18n yii component:
+
+```php
+[
+    'components' => [
+        'i18n' => [
+                'class' => \yii\i18n\I18N::class,
+                'translations' => [
+                    'import-wizard' => [
+                        'class' => \yii\i18n\PhpMessageSource::class,
+                        'sourceLanguage' => 'en',
+                        'basePath' => '@vendor/elfuvo/yii2-import/src/messages',
+                    ],
+                ],
+        ]
+    ]
+];
+```
+
+
 Add the import steps actions to the controller:
 
 ```php
@@ -87,7 +107,7 @@ Add the import steps actions to the controller:
     }
 ```
 
-Add the import link button to the view:
+Add the import link button into the view:
 
 ```php
     <?= Html::a('Upload Excel file for import', ['upload-file-import'], [

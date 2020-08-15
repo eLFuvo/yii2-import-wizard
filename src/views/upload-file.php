@@ -25,7 +25,7 @@ use yii\widgets\ActiveForm;
 
 ImportSetupAsset::register($this);
 
-$this->title = 'Загрузить файл импорта';
+$this->title = Yii::t('import-wizard', 'Choose file for import');
 
 ?>
 
@@ -48,7 +48,7 @@ $this->title = 'Загрузить файл импорта';
 
         <div class="form-group">
             <label for="importFile">
-                Загрузите файл импорта
+                <?= Yii::t('import-wizard', 'Choose file for import'); ?>
                 (<?= implode(', ', $extensions); ?>)
             </label>
             <?= $form->field($uploadForm, 'file')

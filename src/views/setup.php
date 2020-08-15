@@ -25,7 +25,7 @@ use yii\widgets\ActiveForm;
 /** @var int $startRowIndex */
 /** @var \elfuvo\import\MapAttribute[] $mapAttribute */
 
-$this->title = 'Настройка импорта';
+$this->title = Yii::t('import-wizard', 'Import settings');
 
 ImportSetupAsset::register($this);
 ?>
@@ -42,7 +42,7 @@ ImportSetupAsset::register($this);
         <table class="table">
             <thead>
             <tr>
-                <th>Колонка в файле</th>
+                <th><?= Yii::t('import-wizard', 'Column in the file'); ?></th>
                 <?php
                 foreach ($header as $column => $value): ?>
                     <td><strong><?= $column; ?></strong></td>
@@ -52,7 +52,7 @@ ImportSetupAsset::register($this);
             </thead>
             <tbody>
             <tr>
-                <td>1я строка импорта</td>
+                <td><?= Yii::t('import-wizard', '1st row'); ?></td>
                 <?php
                 foreach ($header as $column => $value): ?>
                     <td><?= Html::encode($value); ?></td>
@@ -60,7 +60,7 @@ ImportSetupAsset::register($this);
                 endforeach; ?>
             </tr>
             <tr>
-                <td>Поле модели для заполнения</td>
+                <td><?= Yii::t('import-wizard', 'Model field to fill'); ?></td>
                 <?php
                 foreach ($header as $column => $value):
                     $model = $mapAttribute[$column] ?? new MapAttribute();
@@ -82,7 +82,7 @@ ImportSetupAsset::register($this);
                 endforeach; ?>
             </tr>
             <tr>
-                <td>Преобразовать значение из импорта в</td>
+                <td><?= Yii::t('import-wizard', 'Convert value from import to'); ?></td>
                 <?php
                 foreach ($header as $column => $value):
                     $model = $mapAttribute[$column] ?? new MapAttribute();
@@ -102,7 +102,7 @@ ImportSetupAsset::register($this);
                 endforeach; ?>
             </tr>
             <tr>
-                <td>Поля для идентификации модели</td>
+                <td><?= Yii::t('import-wizard', 'Model identification fields'); ?></td>
                 <?php
                 foreach ($header as $column => $value):
                     $model = $mapAttribute[$column] ?? new MapAttribute();
@@ -120,7 +120,7 @@ ImportSetupAsset::register($this);
         </table>
 
         <div class="form-group">
-            <label for="startRowIndex">Начать импорт со строки</label>
+            <label for="startRowIndex"><?= Yii::t('import-wizard', 'Start import from row'); ?></label>
             <?= Html::input(
                 'number',
                 'startRowIndex',
@@ -133,8 +133,10 @@ ImportSetupAsset::register($this);
             ); ?>
         </div>
         <div class="form-group">
-            <?= Html::submitButton('Импортировать',
-                ['class' => 'btn btn-success']) ?>
+            <?= Html::submitButton(
+                Yii::t('import-wizard', 'Start import'),
+                ['class' => 'btn btn-success']
+            ); ?>
         </div>
 
         <?php
