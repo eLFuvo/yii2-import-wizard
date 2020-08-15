@@ -6,13 +6,6 @@
  * Time: 21:32
  */
 
-/**
- * Created by PhpStorm.
- * User: petr
- * Date: 01.12.2016
- * Time: 15:53
- */
-
 namespace elfuvo\import\adapter;
 
 use PhpOffice\PhpSpreadsheet\Reader\IReadFilter;

@@ -6,13 +6,6 @@
  * Time: 21:32
  */
 
-/**
- * Created by PhpStorm.
- * User: elfuvo
- * Date: 26.04.19
- * Time: 14:05
- */
-
 use elfuvo\import\assets\ImportSetupAsset;
 use elfuvo\import\MapAttribute;
 use yii\helpers\Html;

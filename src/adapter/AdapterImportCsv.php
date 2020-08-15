@@ -6,13 +6,6 @@
  * Time: 21:32
  */
 
-/**
- * Created by PhpStorm.
- * User: elfuvo
- * Date: 30.04.19
- * Time: 13:31
- */
-
 namespace elfuvo\import\adapter;
 
 use elfuvo\import\exception\AdapterImportException;

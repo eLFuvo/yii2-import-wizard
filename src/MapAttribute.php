@@ -6,13 +6,6 @@
  * Time: 21:32
  */
 
-/**
- * Created by PhpStorm.
- * User: elfuvo
- * Date: 19.04.19
- * Time: 15:40
- */
-
 namespace elfuvo\import;
 
 use DateTime;

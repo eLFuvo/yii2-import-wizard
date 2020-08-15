@@ -6,13 +6,6 @@
  * Time: 21:32
  */
 
-/**
- * Created by PhpStorm.
- * User: elfuvo
- * Date: 04.04.19
- * Time: 18:59
- */
-
 namespace elfuvo\import\result;
 
 use elfuvo\import\adapter\ExcelProgress;

@@ -6,13 +6,6 @@
  * Time: 21:32
  */
 
-/**
- * Created by PhpStorm.
- * User: elfuvo
- * Date: 18.04.19
- * Time: 16:34
- */
-
 namespace elfuvo\import;
 
 use elfuvo\import\adapter\AdapterImportInterface;
