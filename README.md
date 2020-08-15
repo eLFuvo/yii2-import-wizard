@@ -1,5 +1,5 @@
 [![Latest Stable Version](https://img.shields.io/github/v/release/elfuvo/yii2-import-wizard.svg)](https://packagist.org/packages/elfuvo/yii2-import-wizard) 
-![Build](https://img.shields.io/github/workflow/status/elfuvo/yii2-import-wizard/Build.svg)
+[![Build](https://img.shields.io/github/workflow/status/elfuvo/yii2-import-wizard/Build.svg)](https://github.com/elfuvo/yii2-import-wizard)
 [![Total Downloads](https://img.shields.io/github/downloads/elfuvo/yii2-import-wizard/total.svg)](https://packagist.org/packages/elfuvo/yii2-import-wizard)
 [![License](https://img.shields.io/github/license/elfuvo/yii2-import-wizard.svg)](https://github.com/elfuvo/yii2-import-wizard/blob/master/LICENSE)
 [![Yii2](https://img.shields.io/badge/Powered_by-Yii_Framework-green.svg?style=flat)](http://www.yiiframework.com/)
