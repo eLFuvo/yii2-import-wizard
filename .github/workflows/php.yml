@@ -19,3 +19,5 @@ jobs:
         run: docker-compose exec -T application composer install
       - name: Run test suite
         run: docker-compose exec -T application vendor/bin/codecept run
+      - name: Check supervisor logs
+        run: cat tests/supervisor/log/*.log

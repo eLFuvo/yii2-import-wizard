@@ -5,6 +5,8 @@ services:
         container_name: yii2-import
         volumes:
             - ./:/var/www/html
+            - ./tests/supervisor/log:/usr/log/supervisor
+            - ./tests/supervisor/application.conf:/etc/supervisor/application.conf
         environment:
             APACHE_RUN_ID: 1000
             APACHE_RUN_USER: elfuvo
