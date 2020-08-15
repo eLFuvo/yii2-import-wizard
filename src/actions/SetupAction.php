@@ -35,7 +35,7 @@ class SetupAction extends Action
     /**
      * @var string
      */
-    public $view = '@elfuvo/yii2-import-wizard/src/views/setup';
+    public $view = '@vendor/elfuvo/yii2-import-wizard/src/views/setup';
 
     /**
      * @var Model

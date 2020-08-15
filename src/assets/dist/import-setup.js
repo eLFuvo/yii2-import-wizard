@@ -6,7 +6,7 @@
  */
 
 (function ($) {
-    var $importProgresContainer = $('.import-progress-container'),
+    var $importProgressContainer = $('.import-progress-container'),
         $form = $('.import-form');
     $('.map-attribute').on('change', function () {
         var castTo = $(this).find('option:selected').data('type'),
@@ -16,19 +16,21 @@
             $selectCastTo.val(castTo).trigger('change');
         }
     });
-
-    $(window).on('import.stat.reload', function () {
-        $importProgresContainer.load($importProgresContainer.data('url'), function (content) {
-            if (/Not Found/.test(content)) {
-                return;
-            }
-            if ($importProgresContainer.find('.import-done').length === 0) {
-                $form.hide();
-                setTimeout(function () {
-                    $(window).trigger('import.stat.reload');
-                }, 2000);
-            }
+    if ($importProgressContainer.length) {
+        $(window).on('import.stat.reload', function () {
+            $importProgressContainer.load($importProgressContainer.data('url'), function (content) {
+                if (/Not Found/.test(content)) {
+                    return;
+                }
+                if ($importProgressContainer.find('.import-stat').length
+                    && $importProgressContainer.find('.import-done').length === 0) {
+                    $form.hide();
+                    setTimeout(function () {
+                        $(window).trigger('import.stat.reload');
+                    }, 2000);
+                }
+            });
         });
-    });
-    $(window).trigger('import.stat.reload');
+        $(window).trigger('import.stat.reload');
+    }
 })(jQuery);

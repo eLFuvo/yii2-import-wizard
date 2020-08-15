@@ -15,7 +15,7 @@ if ($result->getProgressTotal() && $result->getProgressDone() < $result->getProg
     $percentDone = $result->getProgressDone() > 0 ?
         round($result->getProgressDone() / $result->getProgressTotal() * 100) : 1;
     ?>
-    <div class="card-content">
+    <div class="import-stat card-content">
         <div class="well">
             <p><?= Yii::t('import-wizard', 'Data is importing'); ?>...</p>
             <p><?= Yii::t('import-wizard', 'Imported'); ?>:
@@ -32,7 +32,7 @@ if ($result->getProgressTotal() && $result->getProgressDone() < $result->getProg
     </div>
 <?php
 elseif ($result->getProgressTotal() && $result->getProgressDone() == $result->getProgressTotal()): ?>
-    <div class="card-content import-done">
+    <div class="card-content import-stat import-done">
         <div class="well">
             <p><?= Yii::t('import-wizard', 'Data imported'); ?></p>
             <p><?= Yii::t('import-wizard', 'Import statistics'); ?>: <br/>

@@ -24,7 +24,7 @@ class ProgressAction extends Action
     /**
      * @var string
      */
-    public $view = '@elfuvo/yii2-import-wizard/src/views/progress';
+    public $view = '@vendor/elfuvo/yii2-import-wizard/src/views/progress';
 
     /**
      * @var Model
