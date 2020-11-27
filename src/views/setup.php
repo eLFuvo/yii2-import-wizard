@@ -12,6 +12,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
+/** @var \yii\base\Model $model */
 /** @var array $header */
 /** @var array $attributes */
 /** @var array $attributeOptions */
@@ -30,7 +31,14 @@ ImportSetupAsset::register($this);
     </div>
     <div class="card-content">
         <?php
-        $form = ActiveForm::begin(['options' => ['class' => 'setup-import-form']]); ?>
+        $form = ActiveForm::begin(
+            [
+                'options' => [
+                    'class' => 'setup-import-form',
+                    'data-model' => $model->formName(),
+                ]
+            ]
+        ); ?>
 
         <table class="table">
             <thead>
@@ -100,11 +108,16 @@ ImportSetupAsset::register($this);
                 foreach ($header as $column => $value):
                     $model = $mapAttribute[$column] ?? new MapAttribute();
                     ?>
-                    <td>
+                    <td class="identity">
                         <?= $form->field(
                             $model,
                             '[' . $column . ']identity'
-                        )->checkbox(); ?>
+                        )->checkbox(
+                            [
+                                'class' => 'identity',
+                                'data-id' => $column,
+                            ]
+                        ); ?>
                     </td>
                 <?php
                 endforeach; ?>
@@ -120,7 +133,7 @@ ImportSetupAsset::register($this);
                 $startRowIndex,
                 [
                     'id' => 'startRowIndex',
-                    'class' => 'form-control',
+                    'class' => 'form-control start-row-index',
                     'min' => 1,
                 ]
             ); ?>

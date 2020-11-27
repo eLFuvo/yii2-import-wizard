@@ -26,12 +26,12 @@ or add
 "elfuvo/yii2-import-wizard": "~0.1.0"
 ```
 
-to the require section of your `composer.json` file.
+to the "require" section of your `composer.json` file.
 
 Configure
 ---------
 
-Configure the desired storage option for the import result and the available import adapters
+Configure desired storage option for the import result and the available import adapters
 
 ```php
 // in common app config
@@ -72,7 +72,7 @@ Add translations to i18n yii component:
 ```
 
 
-Add the import steps actions to the controller:
+Add import steps actions to the controller:
 
 ```php
     /**
@@ -80,19 +80,36 @@ Add the import steps actions to the controller:
      */
     public function actions()
     {
+        
         return [
             'upload-file-import' => [
-                'class' => UploadFileImportAction::class,
+                'class' => \elfuvo\import\actions\UploadFileAction::class,
                 'model' => new Review(), // model instance for import
                 'nextAction' => 'setup-import', // next action name
                 'progressAction' => 'progress', // name of progress action
             ],
             'setup-import' => [
-                'class' => SetupImportAction::class,
-                'model' => new Review([ // model instance with predefined attribute values. It will be cloned in import service.
-                    'hidden' => Review::HIDDEN_NO,
-                    'createdBy' => Yii::$app->user->getId(),
-                ]),
+                'class' => \elfuvo\import\actions\SetupAction::class,
+                // model instance with predefined attribute values. It will be cloned in import service.
+                /*'model' => new Review([ 
+                      'hidden' => Nko::HIDDEN_NO,
+                      'language' => Yii::$app->language,
+                      'createdBy' => Yii::$app->user->getId(),
+                ])*/
+                // can be callable function
+                'model' => function(){ 
+                    $importModel = new Review([
+                        'hidden' => Review::HIDDEN_NO,
+                        'language' => Yii::$app->language,
+                        'createdBy' => Yii::$app->user->getId(),
+                    ]);
+                    // some behaviors does not works in console app
+                    // there we can disable them 
+                    $importModel->detachBehavior('LanguageBehavior');
+                    $importModel->detachBehavior('CreatedByBehavior');
+                    
+                    return $importModel;
+                },                     
                 'scenario' => Review::SCENARIO_DEFAULT, // scenario of model validation when saving model from import
                 'previousAction' => 'upload-file-import', // previous action name
                 'excludeAttributes' => [ // exclude model attributes for building import map
@@ -104,14 +121,14 @@ Add the import steps actions to the controller:
                 ]
             ],
             'progress' => [ // action for showing current import progress/statistic and errors after import is done
-                'class' => ProgressAction::class,
+                'class' => \elfuvo\import\actions\ProgressAction::class,
                 'model' => new Review(),
             ],
         ];
     }
 ```
 
-Add the import link button into the view:
+Add import link button into the view:
 
 ```php
     <?= Html::a(Yii::t('import-wizard', 'Import models from Excel file'), ['upload-file-import'], [
@@ -120,10 +137,10 @@ Add the import link button into the view:
 ```
 
 
-It is necessary to carefully consider the validation of the model, 
+It is necessary to carefully consider validation of the model, 
 as bad validation may lead to incorrect data insertion 
 (for example: a date from Excel cannot be inserted as a date in MySql) and errors when inserting data into the database.
-Also, the validation rules set automatically the type of conversion of import data to the value of the model attribute.
+Also, the validation rules set automatically type of conversion of import data to the value of the model attribute.
 
 ```php
     /**

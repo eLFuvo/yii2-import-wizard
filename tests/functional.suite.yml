@@ -5,8 +5,5 @@ modules:
     enabled:
         - Asserts
         - Cli
-        - PhpBrowser:
-            url: http://localhost:8080/
-
-
-
+        -   PhpBrowser:
+                url: http://localhost:8080/

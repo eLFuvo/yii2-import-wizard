@@ -191,6 +191,13 @@ class ImportService extends BaseObject
                 $existsModelConditions = [];
                 /** @var Model|ActiveRecord $model */
                 $model = clone $this->model;
+                // some behaviors can be detached for the original model
+                $behaviors = $this->model->getBehaviors();
+                foreach ($model->getBehaviors() as $behavior => $config) {
+                    if (!in_array($behavior, $behaviors)) {
+                        $model->detachBehavior($behavior);
+                    }
+                }
                 $model->setScenario($this->validationScenario);
                 foreach ($row as $column => $value) {
                     $mapAttributeModel = $this->map[$column] ?? new MapAttribute();

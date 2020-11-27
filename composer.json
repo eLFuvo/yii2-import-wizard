@@ -1,46 +1,46 @@
 {
-  "name": "elfuvo/yii2-import-wizard",
-  "description": "Step-by-step import from Excel files with mapping of model attributes",
-  "type": "yii2-extension",
-  "keywords": [
-    "yii2",
-    "extension",
-    "import",
-    "xlsx",
-    "csv"
-  ],
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "elfuvo",
-      "email": "elfuvo@gmail.com"
+    "name": "elfuvo/yii2-import-wizard",
+    "description": "Step-by-step import from Excel files with mapping of model attributes",
+    "type": "yii2-extension",
+    "keywords": [
+        "yii2",
+        "extension",
+        "import",
+        "xlsx",
+        "csv"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "elfuvo",
+            "email": "elfuvo@gmail.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ],
+    "require": {
+        "php": ">=7.1.0",
+        "yiisoft/yii2": "~2.0.12",
+        "phpoffice/phpspreadsheet": "~1.2",
+        "yiisoft/yii2-queue": "~2.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "elfuvo\\import\\": "src",
+            "elfuvo\\import\\app\\": "tests/app"
+        }
+    },
+    "require-dev": {
+        "codeception/codeception": "^4.0",
+        "codeception/module-asserts": "^1.2",
+        "codeception/module-phpbrowser": "^1.0",
+        "codeception/module-cli": "^1.0"
+    },
+    "scripts": {
+        "test": "vendor/bin/codecept run"
     }
-  ],
-  "repositories": [
-    {
-      "type": "composer",
-      "url": "https://asset-packagist.org"
-    }
-  ],
-  "require": {
-    "php": ">=7.1.0",
-    "yiisoft/yii2": "~2.0.12",
-    "phpoffice/phpspreadsheet": "~1.5.2",
-    "yiisoft/yii2-queue": "~2.0.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "elfuvo\\import\\": "src",
-      "elfuvo\\import\\app\\": "tests/app"
-    }
-  },
-  "require-dev": {
-    "codeception/codeception": "^4.0",
-    "codeception/module-asserts": "^1.2",
-    "codeception/module-phpbrowser": "^1.0",
-    "codeception/module-cli": "^1.0"
-  },
-  "scripts": {
-    "test": "vendor/bin/codecept run"
-  }
 }

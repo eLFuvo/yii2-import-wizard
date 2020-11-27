@@ -95,6 +95,10 @@ class SetupAction extends Action
     {
         parent::init();
 
+        if (is_callable($this->model)) {
+            $this->model = call_user_func($this->model);
+        }
+
         if (!$this->model) {
             throw new InvalidConfigException('Model property must be set');
         }
