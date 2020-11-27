@@ -143,6 +143,13 @@ ImportSetupAsset::register($this);
                 Yii::t('import-wizard', 'Start import'),
                 ['class' => 'btn btn-success']
             ); ?>
+            <?= Html::button(
+                Yii::t('import-wizard', 'Reset'),
+                [
+                    'type'=>'reset',
+                    'class' => 'btn btn-default'
+                ]
+            ); ?>
         </div>
 
         <?php

@@ -192,6 +192,10 @@ class MapAttribute extends Model
                 if ($validator instanceof $allowedValidator) {
                     if ($validator instanceof NumberValidator && $validator->integerOnly) {
                         return self::TYPE_INTEGER;
+                    } elseif ($validator instanceof DateValidator
+                        && strlen($validator->format) <= 10 // YYYY-MM-dd, dd/MM/YYYY
+                        && preg_match('#Y#i', $validator->format)) {
+                        return self::TYPE_DATE;
                     }
 
                     return $castType;

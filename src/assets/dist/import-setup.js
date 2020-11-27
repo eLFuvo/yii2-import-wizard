@@ -43,10 +43,13 @@
     }
     $setupForm.find('.map-attribute').on('change', function () {
         const attribute = $(this).val(),
-            castTo = $(this).find('option:selected').data('type'),
             id = $(this).closest('td').data('id'),
             $selectCastTo = $setupForm.find('.type[data-id="' + id + '"] select');
-        if (castTo && $selectCastTo.length) {
+        let castTo = $(this).find('option:selected').data('type');
+        if (castTo <= '') {
+            castTo = 'string';
+        }
+        if ($selectCastTo.length) {
             $selectCastTo.val(castTo).trigger('change');
         }
         mapAttribute[id] = {
@@ -65,6 +68,16 @@
             columns.push($(input).data('id'));
         });
         window.localStorage.setItem('identity-' + model, JSON.stringify(columns));
+    });
+    $setupForm.find('button[type="reset"]').on('click', function () {
+        $setupForm.find('.map-attribute').val('').trigger('change');
+        // $setupForm.find('select.type').val('string').trigger('change');
+        $setupForm.find('input.identity').prop('checked', false).trigger('change');
+        $setupForm.find('input.start-row-index').val(2);
+
+        window.localStorage.removeItem('import-' + model);
+        window.localStorage.removeItem('startRow-' + model);
+        window.localStorage.removeItem('identity-' + model);
     });
     if ($importProgressContainer.length) {
         $(window).on('import.stat.reload', function () {
