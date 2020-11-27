@@ -49,28 +49,25 @@ class UploadImportFileCest
 
         $I->amOnPage('/default/setup-import');
         $I->seeElement('.attribute');
-        // not configured form errors
-        $I->click('.setup-import-form button[type="submit"]');
-        $I->seeNumberOfElements('.form-group.has-error', 6);
 
         // reviews.xlsx
         // A            | B     | C      | D    | E      | F
         // b24StationId | title | author | text | rating | date of publication
 
         // configure form and send it
-        $I->selectOption('#mapattribute-a-attribute', ['value' => MapAttribute::IGNORE_COLUMN]);
+        $I->selectOption('.attribute[data-id="A"] select', ['value' => MapAttribute::IGNORE_COLUMN]);
         /**
          * @see Review
          */
-        $I->selectOption('#mapattribute-b-attribute', ['value' => 'title']);
-        $I->selectOption('#mapattribute-c-attribute', ['value' => 'author']);
-        $I->selectOption('#mapattribute-d-attribute', ['value' => 'text']);
+        $I->selectOption('.attribute[data-id="B"] select', ['value' => 'title']);
+        $I->selectOption('.attribute[data-id="C"] select', ['value' => 'author']);
+        $I->selectOption('.attribute[data-id="D"] select', ['value' => 'text']);
 
-        $I->selectOption('#mapattribute-e-attribute', ['value' => 'rating']);
-        $I->selectOption('#mapattribute-e-castto', ['value' => MapAttribute::TYPE_FLOAT]);
+        $I->selectOption('.attribute[data-id="E"] select', ['value' => 'rating']);
+        $I->selectOption('.type[data-id="A"] select', ['value' => MapAttribute::TYPE_FLOAT]);
 
-        $I->selectOption('#mapattribute-f-attribute', ['value' => 'publishAt']);
-        $I->selectOption('#mapattribute-f-castto', ['value' => MapAttribute::TYPE_DATETIME]);
+        $I->selectOption('.attribute[data-id="F"] select', ['value' => 'publishAt']);
+        $I->selectOption('.type[data-id="F"] select', ['value' => MapAttribute::TYPE_DATETIME]);
 
         $I->click('.setup-import-form button[type="submit"]');
         $I->dontSeeElement('.form-group.has-error');
