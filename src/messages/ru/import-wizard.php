@@ -24,9 +24,9 @@ return [
     'Data imported' => 'Данные импортированы',
     'Import statistics' => 'Статистика импорта',
     'Items added' => 'Добавлено элементов',
-    'Items updated' => 'Добавлено элементов',
-    'Items deleted' => 'Добавлено элементов',
-    'Ignored lines' => 'Добавлено элементов',
+    'Items updated' => 'Обновлено элементов',
+    'Items deleted' => 'Удалено элементов',
+    'Ignored lines' => 'Пропущено элементов',
     'Errors' => 'Ошибки',
     'Reset' => 'Сбросить настройки',
 ];

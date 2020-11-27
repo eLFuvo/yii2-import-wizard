@@ -185,6 +185,7 @@ class ImportService extends BaseObject
         if ($progress = $this->getResult()->getLastBatch()) {
             $this->adapter->setProgress($progress);
         }
+        $behaviors = array_keys($this->model->getBehaviors());
         if ($rows = $this->adapter->getBatchData()) {
             $transaction = Yii::$app->db->beginTransaction();
             foreach ($rows as $row) {
@@ -192,7 +193,6 @@ class ImportService extends BaseObject
                 /** @var Model|ActiveRecord $model */
                 $model = clone $this->model;
                 // some behaviors can be detached for the original model
-                $behaviors = $this->model->getBehaviors();
                 foreach ($model->getBehaviors() as $behavior => $config) {
                     if (!in_array($behavior, $behaviors)) {
                         $model->detachBehavior($behavior);
