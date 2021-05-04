@@ -11,6 +11,7 @@ namespace elfuvo\import;
 use DateTime;
 use Exception;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
+use Yii;
 use yii\base\InvalidArgumentException;
 use yii\base\Model;
 use yii\helpers\StringHelper;
@@ -23,7 +24,7 @@ use yii\validators\UrlValidator;
 
 /**
  * @property string|int $column
- * @property boolean $identity
+ * @property boolean|int $identity
  * @property string $attribute
  * @property string $castTo
  *
@@ -84,7 +85,7 @@ class MapAttribute extends Model
     /**
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['attribute', 'castTo'], 'required'],
@@ -97,28 +98,28 @@ class MapAttribute extends Model
     /**
      * @return array
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
-            'attribute' => 'Выберите св-во элемента',
-            'castTo' => 'Преобразовать значение',
-            'identity' => 'Идентификатор элемента',
+            'attribute' => Yii::t('import-wizard', 'Choose property of item'),
+            'castTo' => Yii::t('import-wizard', 'Cast value to'),
+            'identity' => Yii::t('import-wizard', 'Item identity'),
         ];
     }
 
     /**
      * @return array
      */
-    public static function getCastList()
+    public static function getCastList(): array
     {
         return [
-            self::TYPE_STRING => 'Строка',
-            self::TYPE_INTEGER => 'Целое число',
-            self::TYPE_FLOAT => 'Дробное число',
-            self::TYPE_DATE => 'Дата',
-            self::TYPE_DATETIME => 'Дата и время',
-            self::TYPE_EMAIL => 'E-mail',
-            self::TYPE_URL => 'Ссылка',
+            self::TYPE_STRING => Yii::t('import-wizard', 'String'),
+            self::TYPE_INTEGER => Yii::t('import-wizard', 'Integer'),
+            self::TYPE_FLOAT => Yii::t('import-wizard', 'Number'),
+            self::TYPE_DATE => Yii::t('import-wizard', 'Date'),
+            self::TYPE_DATETIME => Yii::t('import-wizard', 'Date and time'),
+            self::TYPE_EMAIL => Yii::t('import-wizard', 'E-mail'),
+            self::TYPE_URL => Yii::t('import-wizard', 'URL'),
         ];
     }
 
@@ -126,7 +127,7 @@ class MapAttribute extends Model
      * @param $value
      * @return string|null
      */
-    protected function castToDate($value)
+    protected function castToDate($value): ?string
     {
         try {
             $dt = new DateTime($value);
@@ -149,7 +150,7 @@ class MapAttribute extends Model
      * @param $value
      * @return string|null
      */
-    protected function castToDateTime($value)
+    protected function castToDateTime($value): ?string
     {
         try {
             $dt = new DateTime($value);
@@ -182,9 +183,9 @@ class MapAttribute extends Model
      *
      * @param Model $model
      * @param $attribute
-     * @return int|null|string
+     * @return string|null
      */
-    public static function detectCasting(Model $model, $attribute)
+    public static function detectCasting(Model $model, $attribute): ?string
     {
         $validators = $model->getActiveValidators($attribute);
         foreach ($validators as $validator) {
@@ -210,7 +211,7 @@ class MapAttribute extends Model
      * Casts the given value to the specified type.
      * @param mixed $value value to be type-casted.
      * @param string|callable $type type name or typecast callable.
-     * @return mixed typecast result.
+     * @return bool|float|int|string|null typecast result.
      */
     protected function typecastValue($value, $type)
     {
@@ -234,12 +235,10 @@ class MapAttribute extends Model
                     return (string)$value;
                 case self::TYPE_DATE:
                     return $this->castToDate($value);
-                    break;
                 case self::TYPE_DATETIME:
                     return $this->castToDateTime($value);
-                    break;
                 default:
-                    throw new InvalidArgumentException("Unsupported type '{$type}'");
+                    throw new InvalidArgumentException('Unsupported type "' . $type . '"');
             }
         }
 
@@ -249,8 +248,8 @@ class MapAttribute extends Model
     /**
      * @return bool
      */
-    public function isIdentity()
+    public function isIdentity(): bool
     {
-        return $this->identity ? true : false;
+        return (bool)$this->identity;
     }
 }

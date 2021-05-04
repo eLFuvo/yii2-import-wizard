@@ -23,9 +23,7 @@ $this->title = Yii::t('import-wizard', 'Import settings');
 
 ImportSetupAsset::register($this);
 ?>
-
 <div class="card">
-
     <div class="card-header">
         <h4 class="card-title"><?= Html::encode($this->title) ?></h4>
     </div>
@@ -43,7 +41,7 @@ ImportSetupAsset::register($this);
         <table class="table">
             <thead>
             <tr>
-                <th><?= Yii::t('import-wizard', 'Column in the file'); ?></th>
+                <th><?= Yii::t('import-wizard', 'Column in a file'); ?></th>
                 <?php
                 foreach ($header as $column => $value): ?>
                     <td><strong><?= $column; ?></strong></td>
@@ -83,7 +81,7 @@ ImportSetupAsset::register($this);
                 endforeach; ?>
             </tr>
             <tr>
-                <td><?= Yii::t('import-wizard', 'Convert value from import to'); ?></td>
+                <td><?= Yii::t('import-wizard', 'Cast value from import to'); ?></td>
                 <?php
                 foreach ($header as $column => $value):
                     $model = $mapAttribute[$column] ?? new MapAttribute();

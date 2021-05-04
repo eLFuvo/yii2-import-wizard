@@ -55,8 +55,10 @@ $this->title = Yii::t('import-wizard', 'Choose file for import');
         </div>
 
         <div class="form-group">
-            <?= Html::submitButton('Загрузить файл',
-                ['class' => 'btn btn-success']) ?>
+            <?= Html::submitButton(
+                Yii::t('import-wizard', 'Upload file'),
+                ['class' => 'btn btn-success']
+            ) ?>
         </div>
 
         <?php
