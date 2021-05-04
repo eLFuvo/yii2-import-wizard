@@ -160,3 +160,8 @@ Important! Import file must have column(s) with unique (identity) values for upd
 
 Yii2 queue component must be configured for executing ImportJob.
 
+Screenshots
+------------
+![Step 1](resources/upload-file.png "step 1 - upload file for import")
+![Step 2](resources/import-setup.png "step 2 - setup import map")
+![Step 3](resources/progress.png "step 3 - wait until import done")
