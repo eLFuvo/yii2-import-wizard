@@ -9,7 +9,7 @@
 return \yii\helpers\ArrayHelper::merge(require('common.php'),
     [
         'id' => 'tests',
-        'controllerNamespace' => 'elfuvo\\import\\app\\controllers',
+        'controllerNamespace' => 'elfuvo\\import\\tests\\app\\controllers',
         'viewPath' => '@app/views',
         'defaultRoute' => 'default/upload-file-import',
         'name' => 'Import wizard',

@@ -8,7 +8,7 @@
 
 return [
     'id' => 'tests',
-    'controllerNamespace' => 'elfuvo\\import\\app\\controllers',
+    'controllerNamespace' => 'elfuvo\\import\\tests\\app\\controllers',
     'viewPath' => '@app/views',
     'defaultRoute' => 'default/upload-file-import',
     'name' => 'Import wizard',
@@ -34,8 +34,8 @@ return [
                     \elfuvo\import\adapter\AdapterImportCsv::class,
                 ]
             ],
-            yii\web\Request::class => [
-                'class' => yii\web\Request::class,
+            \yii\web\Request::class => [
+                'class' => \yii\web\Request::class,
                 'enableCookieValidation' => false,
                 'enableCsrfValidation' => false,
             ]
@@ -43,14 +43,8 @@ return [
     ],
     'modules' => [],
     'components' => [
-        'redis' => [
-            'class' => 'yii\redis\Connection',
-            'hostname' => 'localhost',
-            'port' => 6379,
-            'database' => 0,
-        ],
         'cache' => [
-            'class' => yii\caching\FileCache::class,
+            'class' => \yii\caching\FileCache::class,
             'keyPrefix' => 'import-wizard',
         ],
         'queue' => [

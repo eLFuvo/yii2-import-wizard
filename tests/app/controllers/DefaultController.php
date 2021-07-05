@@ -6,12 +6,12 @@
  * Time: 21:33
  */
 
-namespace elfuvo\import\app\controllers;
+namespace elfuvo\import\tests\app\controllers;
 
 use elfuvo\import\actions\ProgressAction;
 use elfuvo\import\actions\SetupAction;
 use elfuvo\import\actions\UploadFileAction;
-use elfuvo\import\app\models\Review;
+use elfuvo\import\tests\app\models\Review;
 use yii\web\Controller;
 use yii\web\ErrorAction;
 

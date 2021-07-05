@@ -31,7 +31,7 @@
     "autoload": {
         "psr-4": {
             "elfuvo\\import\\": "src",
-            "elfuvo\\import\\app\\": "tests/app"
+            "elfuvo\\import\\tests\\app\\": "tests/app"
         }
     },
     "require-dev": {

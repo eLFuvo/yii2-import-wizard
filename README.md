@@ -31,7 +31,7 @@ to the "require" section of your `composer.json` file.
 Configure
 ---------
 
-Configure desired storage option for the import result and the available import adapters
+Configure desired storage option for the import result and available import adapters
 
 ```php
 // in common app config
@@ -158,7 +158,7 @@ Also, the validation rules set automatically type of conversion of import data t
 
 Important! Import file must have column(s) with unique (identity) values for updating existing models.
 
-Yii2 queue component must be configured for executing ImportJob.
+Yii2 [queue](https://github.com/yiisoft/yii2-queue/blob/master/docs/guide/README.md) component must be configured for executing ImportJob.
 
 Screenshots
 ------------

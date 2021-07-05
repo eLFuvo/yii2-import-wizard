@@ -6,7 +6,7 @@
  * Time: 21:33
  */
 
-namespace elfuvo\import\app\models;
+namespace elfuvo\import\tests\app\models;
 
 use Yii;
 use yii\base\Model;
@@ -15,7 +15,7 @@ use yii\base\Model;
 /**
  *
  * Class Review
- * @package elfuvo\import\app\models
+ * @package elfuvo\import\tests\app\models
  */
 class Review extends Model
 {
@@ -105,7 +105,7 @@ class Review extends Model
      * @param null $attributeNames
      * @return bool
      */
-    public function save($runValidation = true, $attributeNames = null)
+    public function save($runValidation = true, $attributeNames = null): bool
     {
         if ($this->validate()) {
             self::getList();

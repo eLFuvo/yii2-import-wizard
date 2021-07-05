@@ -193,6 +193,7 @@ class ImportService extends BaseObject
                 /** @var Model|ActiveRecord $model */
                 $model = clone $this->model;
                 // some behaviors can be detached for the original model
+                // so detach its for cloned model
                 foreach ($model->getBehaviors() as $behavior => $config) {
                     if (!in_array($behavior, $behaviors)) {
                         $model->detachBehavior($behavior);

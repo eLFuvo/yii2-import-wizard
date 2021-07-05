@@ -10,14 +10,16 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Build the docker-compose stack
-        run: docker-compose -f docker-compose.yml -p yii2-import build
+        run: docker build -t yii2-import:latest -f ./tests/docker/Dockerfile ./tests/docker
       - name: Install composer packages
-        run: docker run --rm --volume $PWD:/app yii2-import_application composer install
+        run: docker run --rm --volume $PWD:/app yii2-import:latest composer install
       - name: Run docker containers
         run: docker-compose -f docker-compose.yml up -d
       - name: Check running containers
-        run: docker ps -a
+        run: docker-compose ps
       - name: Check logs
-        run: docker logs yii2-import
+        run: docker-compose logs
       - name: Run test suite
         run: docker-compose exec -T application composer test
+      - name: Stop docker containers
+        run: docker-compose -f docker-compose.yml down
