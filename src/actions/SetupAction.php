@@ -11,12 +11,14 @@ namespace elfuvo\import\actions;
 use elfuvo\import\adapter\AdapterFabricInterface;
 use elfuvo\import\exception\AdapterImportException;
 use elfuvo\import\ImportJob;
-use elfuvo\import\ImportService;
-use elfuvo\import\MapAttribute;
+use elfuvo\import\models\MapAttribute;
+use elfuvo\import\services\ImportServiceInterface;
+use elfuvo\import\services\ValueCasterInterface;
 use Yii;
 use yii\base\Action;
 use yii\base\InvalidConfigException;
 use yii\base\Model;
+use yii\di\Instance;
 use yii\web\Controller;
 
 /**
@@ -51,7 +53,7 @@ class SetupAction extends Action
     public $previousAction = 'upload-file-import';
 
     /**
-     * @var ImportService
+     * @var ImportServiceInterface
      */
     protected $service;
 
@@ -64,14 +66,14 @@ class SetupAction extends Action
      * SetupImportAction constructor.
      * @param string $id
      * @param Controller $controller
-     * @param ImportService $service
+     * @param ImportServiceInterface $service
      * @param AdapterFabricInterface $fabric
      * @param array $config
      */
     public function __construct(
         string $id,
         Controller $controller,
-        ImportService $service,
+        ImportServiceInterface $service,
         AdapterFabricInterface $fabric,
         array $config = []
     ) {
@@ -104,6 +106,8 @@ class SetupAction extends Action
     /**
      * @return string|\yii\web\Response
      * @throws AdapterImportException
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\base\Exception
      */
     public function run()
     {
@@ -147,15 +151,20 @@ class SetupAction extends Action
                 // save statistic: total/done rows
                 $this->service->getResult()->setBatch(null);
 
-                // $this->service->import();
-
-                $importJob = Yii::createObject([
-                    'class' => ImportJob::class,
-                    'adapter' => $adapter,
-                    'mapAttribute' => $mapAttribute,
-                    'model' => $this->model,
-                ]);
-                Yii::$app->queue->push($importJob);
+                // check queue component
+                if (Yii::$app->has('queue')) {
+                    /** @var \yii\queue\JobInterface $importJob */
+                    $importJob = Yii::createObject([
+                        'class' => ImportJob::class,
+                        'adapter' => $adapter,
+                        'mapAttribute' => $mapAttribute,
+                        'modelClass' => get_class($this->model),
+                        'modelAttributes' => array_filter($this->model->getAttributes()),
+                    ]);
+                    Yii::$app->get('queue')->push($importJob);
+                } else {
+                    $this->service->import();
+                }
 
                 return $this->controller->redirect([$this->previousAction]);
             }
@@ -179,6 +188,14 @@ class SetupAction extends Action
             ];
             $attributes[$attribute] = $this->model->getAttributeLabel($attribute);
         }
+        $casterList = MapAttribute::getCastList();
+        if ($customCasters = $this->service->getCustomCasters()) {
+            foreach ($customCasters as $casterClass) {
+                /** @var ValueCasterInterface $caster */
+                $caster = Instance::ensure($casterClass, ValueCasterInterface::class);
+                $casterList[$casterClass] = $caster->getName();
+            }
+        }
 
         return $this->controller->render(
             $this->view,
@@ -189,6 +206,7 @@ class SetupAction extends Action
                 'attributeOptions' => $attributeOptions,
                 'mapAttribute' => $mapAttribute,
                 'startRowIndex' => $adapter->getStartRowIndex(),
+                'casterList' => $casterList,
             ]
         );
     }

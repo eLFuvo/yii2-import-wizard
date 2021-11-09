@@ -9,7 +9,7 @@
 namespace elfuvo\import\result;
 
 use elfuvo\import\adapter\ExcelProgress;
-use elfuvo\import\MapAttribute;
+use elfuvo\import\models\MapAttribute;
 
 /**
  * Interface ResultImportInterface

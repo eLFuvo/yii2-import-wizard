@@ -15,9 +15,11 @@
 
 namespace elfuvo\import\actions;
 
+use Closure;
 use elfuvo\import\adapter\AdapterFabricInterface;
 use elfuvo\import\forms\UploadForm;
-use elfuvo\import\ImportService;
+use elfuvo\import\ImportJob;
+use elfuvo\import\services\ImportServiceInterface;
 use Yii;
 use yii\base\Action;
 use yii\base\InvalidConfigException;
@@ -53,7 +55,17 @@ class UploadFileAction extends Action
     public $model;
 
     /**
-     * @var ImportService
+     * @var null|array|\Closure
+     */
+    public $attributeMap = null;
+
+    /**
+     * @var int
+     */
+    public $startRowIndex = 2;
+
+    /**
+     * @var ImportServiceInterface
      */
     protected $service;
 
@@ -66,14 +78,14 @@ class UploadFileAction extends Action
      * UploadFileAction constructor.
      * @param string $id
      * @param Controller $controller
-     * @param ImportService $service
+     * @param ImportServiceInterface $service
      * @param AdapterFabricInterface $fabric
      * @param array $config
      */
     public function __construct(
         string $id,
         Controller $controller,
-        ImportService $service,
+        ImportServiceInterface $service,
         AdapterFabricInterface $fabric,
         array $config = []
     ) {
@@ -101,6 +113,8 @@ class UploadFileAction extends Action
 
     /**
      * @return string|\yii\web\Response
+     * @throws \yii\base\Exception
+     * @throws \elfuvo\import\exception\AdapterImportException
      */
     public function run()
     {
@@ -123,10 +137,20 @@ class UploadFileAction extends Action
         if (Yii::$app->request->getIsPost()) {
             $uploadForm->file = UploadedFile::getInstance($uploadForm, 'file');
 
-            if ($uploadForm->validate()) {
-                if ($this->service->uploadImportFile($uploadForm->file, $this->model)) {
-                    return $this->controller->redirect([$this->nextAction]);
+            if ($uploadForm->validate() && $this->service->uploadImportFile($uploadForm->file, $this->model)) {
+                $attributeMap = null;
+                if ($this->attributeMap instanceof Closure) {
+                    $adapter = $this->fabric->create($this->service->getUploadedImportFile());
+                    $attributeMap = call_user_func($this->attributeMap, $adapter->getHeaderData());
+                } elseif (is_array($this->attributeMap)) {
+                    $attributeMap = $this->attributeMap;
                 }
+
+                if (!empty($attributeMap) && $this->startImport($attributeMap)) {
+                    return $this->controller->redirect([$this->id]);
+                }
+
+                return $this->controller->redirect([$this->nextAction]);
             }
         }
 
@@ -139,5 +163,42 @@ class UploadFileAction extends Action
                 'progressAction' => $this->progressAction,
             ]
         );
+    }
+
+    /**
+     * @param \elfuvo\import\models\MapAttribute[] $attributeMap
+     * @throws \elfuvo\import\exception\AdapterImportException
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\base\Exception
+     */
+    protected function startImport(array $attributeMap): bool
+    {
+        $adapter = $this->fabric->create($this->service->getUploadedImportFile());
+        $this->service->setMap($attributeMap)->setAdapter($adapter);
+        // reset previous result data
+        $this->service->getResult()->resetBatch();
+        // set total rows
+        $this->service->getResult()->setProgressTotal($adapter->getTotalRows());
+
+        $adapter->setStartRowIndex((int)$this->startRowIndex);
+        $this->service->getResult()->setProgressDone($adapter->getStartRowIndex());
+        // save statistic: total/done rows
+        $this->service->getResult()->setBatch(null);
+
+        if (Yii::$app->has('queue')) {
+            /** @var \yii\queue\JobInterface $importJob */
+            $importJob = Yii::createObject([
+                'class' => ImportJob::class,
+                'adapter' => $adapter,
+                'mapAttribute' => $attributeMap,
+                'modelClass' => get_class($this->model),
+                'modelAttributes' => $this->model->toArray(),
+            ]);
+            Yii::$app->get('queue')->push($importJob);
+        } else {
+            $this->service->import();
+        }
+
+        return true;
     }
 }

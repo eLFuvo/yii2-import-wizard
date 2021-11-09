@@ -9,6 +9,7 @@
 namespace elfuvo\import\adapter;
 
 use elfuvo\import\exception\AdapterImportException;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\BaseReader;
 use PhpOffice\PhpSpreadsheet\Reader\IReader;
@@ -68,6 +69,7 @@ class AdapterImportExcel extends AbstractImportAdapter
 
     /**
      * @return array
+     * @throws \PhpOffice\PhpSpreadsheet\Exception|\elfuvo\import\exception\AdapterImportException
      */
     public function getHeaderData(): array
     {
@@ -90,7 +92,8 @@ class AdapterImportExcel extends AbstractImportAdapter
     }
 
     /**
-     * @throws AdapterImportException
+     * @throws AdapterImportException|\PhpOffice\PhpSpreadsheet\Exception
+     * @throws \Exception
      */
     public function getBatchData(): ?array
     {
@@ -125,17 +128,9 @@ class AdapterImportExcel extends AbstractImportAdapter
         if ($totalRows < 1) {
             throw new AdapterImportException('Nothing to import');
         }
-
-        if ($lastRowIndex >= $sheetTotalRows) {
-            $activeSheetIndex++;
-            // no data sheet for import
-            if ($activeSheetIndex >= $totalSheets) {
-                return null;
-            }
-            $this->getProgress()->lastRowIndex = $lastRowIndex = 1;
-            $this->getProgress()->activeSheetIndex = $activeSheetIndex;
-            $sheetTotalRows = $this->progress->sheetTotalRows[$activeSheetIndex] ??
-                $this->getProgress()->totalRows;
+        // no datasheet for import
+        if ($activeSheetIndex >= $totalSheets) {
+            return null;
         }
 
         $this->getReader()->getReadFilter()
@@ -145,9 +140,9 @@ class AdapterImportExcel extends AbstractImportAdapter
         $spreadsheet->setActiveSheetIndex($activeSheetIndex);
         $worksheet = $spreadsheet->getActiveSheet();
         $highestColumn = $worksheet->getHighestColumn(); // e.g 'F'
+        $highestColumn = Coordinate::columnIndexFromString($highestColumn);
 
-        //get headers (fields)
-        $cols = range('A', $highestColumn);
+        // get headers (fields)
         $list = [];
         $endRowIndex = ($lastRowIndex + self::CHUNK_SIZE > $sheetTotalRows) ? $sheetTotalRows :
             $lastRowIndex + self::CHUNK_SIZE;
@@ -155,14 +150,15 @@ class AdapterImportExcel extends AbstractImportAdapter
         for ($rowIndex = $lastRowIndex; $rowIndex <= $endRowIndex; ++$rowIndex) {
             $item = [];
 
-            foreach ($cols as $col) {
-                $cell = $worksheet->getCell($col . $rowIndex);
+            for ($col = 1; $col <= $highestColumn; $col++) {
+                $cell = $worksheet->getCellByColumnAndRow($col, $rowIndex);
                 if (Date::isDateTime($cell)) {
                     $value = Date::excelToTimestamp($cell->getValue());
                 } else {
                     $value = $this->filter((string)$cell->getFormattedValue());
                 }
-                $item[$col] = $value;
+                $columnName = Coordinate::stringFromColumnIndex($col);
+                $item[$columnName] = $value;
             }
             // skip empty rows
             $row = array_filter($item);
@@ -175,23 +171,31 @@ class AdapterImportExcel extends AbstractImportAdapter
         }
         $lastRowIndex += self::CHUNK_SIZE;
         $this->progress->lastRowIndex = $lastRowIndex;
+
+        if ($lastRowIndex >= $sheetTotalRows) {
+            $activeSheetIndex++;
+
+            $this->getProgress()->lastRowIndex = 1;
+            $this->getProgress()->activeSheetIndex = $activeSheetIndex;
+        }
+
         $this->reader = null;
 
         return $list ?: null;
     }
 
     /**
-     * @param $value
+     * @param string $value
      * @return string
      */
-    protected function filter(string $value)
+    protected function filter(string $value): string
     {
         return trim($value);
     }
 
     /**
      * @return BaseReader|Xls|Xlsx
-     * @throws AdapterImportException
+     * @throws AdapterImportException|\PhpOffice\PhpSpreadsheet\Reader\Exception
      */
     protected function getReader(): BaseReader
     {
@@ -220,6 +224,8 @@ class AdapterImportExcel extends AbstractImportAdapter
 
     /**
      * @return int
+     * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
+     * @throws \elfuvo\import\exception\AdapterImportException
      */
     public function getTotalRows(): int
     {
@@ -238,8 +244,7 @@ class AdapterImportExcel extends AbstractImportAdapter
      */
     public function isDone(): bool
     {
-        return ($this->getProgress()->totalSheets - 1 <= $this->getProgress()->activeSheetIndex) &&
-            ($this->progress->sheetTotalRows[$this->getProgress()->activeSheetIndex] <=
-                $this->getProgress()->lastRowIndex);
+        return ($this->getProgress()->totalSheets - 1 <= $this->getProgress()->activeSheetIndex)
+            && ($this->getProgress()->getSheetTotalRows() <= $this->getProgress()->lastRowIndex);
     }
 }

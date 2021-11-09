@@ -8,7 +8,7 @@
 
 namespace elfuvo\import\actions;
 
-use elfuvo\import\ImportService;
+use elfuvo\import\services\ImportServiceInterface;
 use Yii;
 use yii\base\Action;
 use yii\base\InvalidConfigException;
@@ -32,7 +32,7 @@ class ProgressAction extends Action
     public $model;
 
     /**
-     * @var ImportService
+     * @var ImportServiceInterface
      */
     protected $service;
 
@@ -40,13 +40,13 @@ class ProgressAction extends Action
      * ProgressAction constructor.
      * @param string $id
      * @param Controller $controller
-     * @param ImportService $service
+     * @param ImportServiceInterface $service
      * @param array $config
      */
     public function __construct(
         string $id,
         Controller $controller,
-        ImportService $service,
+        ImportServiceInterface $service,
         array $config = []
     ) {
         $this->service = $service;
@@ -72,6 +72,7 @@ class ProgressAction extends Action
 
     /**
      * @return string|\yii\web\Response
+     * @throws \yii\base\InvalidConfigException
      */
     public function run()
     {

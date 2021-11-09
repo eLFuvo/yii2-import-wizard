@@ -8,6 +8,7 @@
 
 namespace elfuvo\import\result;
 
+use elfuvo\import\adapter\ExcelProgress;
 use Yii;
 use yii\caching\TagDependency;
 
@@ -21,9 +22,9 @@ class CacheContinuesResultImport extends AbstractResultImport
     const CACHE_KEY = 'import';
 
     /**
-     * @param array $list
+     * @param array|ExcelProgress $batch
      */
-    public function setBatch($list): void
+    public function setBatch($batch): void
     {
         $key = [
             self::CACHE_KEY,

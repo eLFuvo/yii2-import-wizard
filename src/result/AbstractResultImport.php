@@ -9,7 +9,7 @@
 namespace elfuvo\import\result;
 
 use elfuvo\import\adapter\ExcelProgress;
-use elfuvo\import\MapAttribute;
+use elfuvo\import\models\MapAttribute;
 
 /**
  * Class AbstractResultImport
@@ -45,7 +45,7 @@ abstract class AbstractResultImport implements ResultImportInterface
     protected $batch;
 
     /**
-     * @var MapAttribute[]
+     * @var \elfuvo\import\models\MapAttribute[]
      */
     protected $map = [];
 

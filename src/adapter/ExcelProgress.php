@@ -66,9 +66,10 @@ class ExcelProgress extends Model
     }
 
     /**
-     * @return integer
+     * @return int
+     * @throws \Exception
      */
-    public function getSheetTotalRows()
+    public function getSheetTotalRows(): int
     {
         return ArrayHelper::getValue($this->sheetTotalRows, $this->activeSheetIndex, 0);
     }

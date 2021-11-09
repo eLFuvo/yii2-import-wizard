@@ -2,18 +2,20 @@
 /**
  * Created by PhpStorm
  * User: elfuvo
- * Date: 2020-08-14
- * Time: 21:32
+ * Date: 2021-10-29
+ * Time: 11:39
  */
 
-namespace elfuvo\import;
+namespace elfuvo\import\models;
 
 use DateTime;
+use elfuvo\import\services\ValueCasterInterface;
 use Exception;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use Yii;
 use yii\base\InvalidArgumentException;
 use yii\base\Model;
+use yii\di\Instance;
 use yii\helpers\StringHelper;
 use yii\validators\BooleanValidator;
 use yii\validators\DateValidator;
@@ -170,8 +172,9 @@ class MapAttribute extends Model
     }
 
     /**
-     * @param Model $model
+     * @param \yii\base\Model $model
      * @param $value
+     * @throws \yii\base\InvalidConfigException
      */
     public function setValue(Model $model, $value)
     {
@@ -212,6 +215,7 @@ class MapAttribute extends Model
      * @param mixed $value value to be type-casted.
      * @param string|callable $type type name or typecast callable.
      * @return bool|float|int|string|null typecast result.
+     * @throws \yii\base\InvalidConfigException
      */
     protected function typecastValue($value, $type)
     {
@@ -238,6 +242,13 @@ class MapAttribute extends Model
                 case self::TYPE_DATETIME:
                     return $this->castToDateTime($value);
                 default:
+                    if (class_exists($type)) {
+                        /** @var ValueCasterInterface $caster */
+                        $caster = Instance::ensure($type, ValueCasterInterface::class);
+
+                        return $caster->cast($this->attribute, $value);
+                    }
+
                     throw new InvalidArgumentException('Unsupported type "' . $type . '"');
             }
         }

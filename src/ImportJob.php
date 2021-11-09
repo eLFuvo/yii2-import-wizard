@@ -10,6 +10,7 @@ namespace elfuvo\import;
 
 use elfuvo\import\exception\MemoryLimitException;
 use elfuvo\import\adapter\AdapterImportInterface;
+use elfuvo\import\services\ImportServiceInterface;
 use Yii;
 use yii\base\BaseObject;
 use yii\base\InvalidArgumentException;
@@ -31,26 +32,31 @@ class ImportJob extends BaseObject implements JobInterface, RetryableJobInterfac
     public $adapter;
 
     /**
-     * @var MapAttribute[]
+     * @var \elfuvo\import\models\MapAttribute[]
      */
     public $mapAttribute;
 
     /**
-     * @var Model
+     * @var string
      */
-    public $model;
+    public $modelClass;
 
     /**
-     * @var ImportService
+     * @var array
+     */
+    public $modelAttributes = [];
+
+    /**
+     * @var \elfuvo\import\services\ImportServiceInterface
      */
     protected $service;
 
     /**
      * ImportJob constructor.
-     * @param ImportService $service
+     * @param ImportServiceInterface $service
      * @param array $config
      */
-    public function __construct(ImportService $service, array $config = [])
+    public function __construct(ImportServiceInterface $service, array $config = [])
     {
         $this->service = $service;
 
@@ -68,7 +74,7 @@ class ImportJob extends BaseObject implements JobInterface, RetryableJobInterfac
         if (!$this->mapAttribute) {
             throw new InvalidArgumentException('Map attributes must be set');
         }
-        if (!$this->model) {
+        if (!$this->modelClass) {
             throw new InvalidArgumentException('Model must be set');
         }
 
@@ -88,8 +94,11 @@ class ImportJob extends BaseObject implements JobInterface, RetryableJobInterfac
 
         $memoryLimit = $this->getMemoryLimit();
 
+        /** @var Model $model */
+        $model = Yii::createObject($this->modelClass);
+        $model->load($this->modelAttributes, '');
         $this->service
-            ->setModel($this->model)
+            ->setModel($model)
             ->setMap($this->mapAttribute)
             ->setAdapter($this->adapter);
 

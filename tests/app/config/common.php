@@ -15,6 +15,9 @@ return [
     'timeZone' => 'UTC',
     'language' => 'ru',
     'basePath' => dirname(dirname(__DIR__)),
+    'bootstrap' => [
+        'log',
+    ],
     'aliases' => [
         '@root' => dirname(dirname(dirname(__DIR__))),
         '@vendor' => '@root/vendor',
@@ -25,6 +28,12 @@ return [
     'container' => [
         'singletons' => [],
         'definitions' => [
+            \elfuvo\import\services\ImportServiceInterface::class => [
+                'class' => \elfuvo\import\services\ImportService::class,
+                'casters' => [
+                    \elfuvo\import\services\BracketValueCaster::class,
+                ]
+            ],
             \elfuvo\import\result\ResultImportInterface::class =>
                 \elfuvo\import\result\FileContinuesResultImport::class,
             \elfuvo\import\adapter\AdapterFabricInterface::class => [
@@ -57,9 +66,19 @@ return [
                 'import-wizard' => [
                     'class' => \yii\i18n\PhpMessageSource::class,
                     'sourceLanguage' => 'en',
-                    'basePath' => '@app/messages',
+                    'basePath' => '@root/src/messages',
                 ],
             ],
         ],
-    ]
+        'log' => [
+            'class' => \yii\log\Dispatcher::class,
+            'traceLevel' => YII_DEBUG ? 3 : 0,
+            'targets' => [
+                'file' => [
+                    'class' => \yii\log\FileTarget::class,
+                    'levels' => \yii\log\Logger::LEVEL_ERROR | \yii\log\Logger::LEVEL_WARNING,
+                ],
+            ]
+        ],
+    ],
 ];

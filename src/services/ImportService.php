@@ -2,32 +2,44 @@
 /**
  * Created by PhpStorm
  * User: elfuvo
- * Date: 2020-08-14
- * Time: 21:32
+ * Date: 2021-10-29
+ * Time: 11:36
  */
 
-namespace elfuvo\import;
+namespace elfuvo\import\services;
 
+use elfuvo\import\adapter\AdapterImportExcel;
 use elfuvo\import\adapter\AdapterImportInterface;
+use elfuvo\import\exception\AdapterImportException;
 use elfuvo\import\result\ResultImportInterface;
 use Yii;
 use yii\base\BaseObject;
 use yii\base\Exception;
+use yii\base\InvalidConfigException;
 use yii\base\Model;
 use yii\db\ActiveRecord;
 use yii\helpers\FileHelper;
 use yii\web\UploadedFile;
+use elfuvo\import\models\MapAttribute;
 
 /**
  * Class ImportService
  * @package elfuvo\import
+ *
+ * @property-read string[] $customCasters
+ * @property-read string $uploadedImportFile
  */
-class ImportService extends BaseObject
+class ImportService extends BaseObject implements ImportServiceInterface
 {
     /**
      * @var string
      */
     public $tmpPath = '@runtime/import';
+
+    /**
+     * @var string[] - list of custom value casters
+     */
+    public $casters = [];
 
     /**
      * @var AdapterImportInterface
@@ -70,7 +82,7 @@ class ImportService extends BaseObject
      * @param AdapterImportInterface $adapter
      * @return ImportService
      */
-    public function setAdapter(AdapterImportInterface $adapter): self
+    public function setAdapter(AdapterImportInterface $adapter): ImportServiceInterface
     {
         $this->adapter = $adapter;
 
@@ -80,20 +92,44 @@ class ImportService extends BaseObject
     /**
      * @param MapAttribute[] $map
      * @return ImportService
+     * @throws \yii\base\InvalidConfigException
      */
-    public function setMap(array $map): self
+    public function setMap(array $map): ImportServiceInterface
     {
-        $this->map = $map;
+        $this->map = $this->normalizeAttributeMap($map);
         $this->getResult()->setMap($map);
 
         return $this;
     }
 
     /**
-     * @param Model $model
-     * @return ImportService
+     * @param array $attributeMap
+     * @return array
+     * @throws \yii\base\InvalidConfigException
      */
-    public function setModel(Model $model): self
+    protected function normalizeAttributeMap(array $attributeMap): array
+    {
+        $list = [];
+        foreach ($attributeMap as $index => $item) {
+            if (!$item instanceof MapAttribute) {
+                throw new InvalidConfigException('Element of attribute map must be instance of ' . MapAttribute::class);
+            }
+            if ($item->column) {
+                $list[$item->column] = $item;
+            } else {
+                $list[$index] = $item;
+            }
+        }
+
+        return $list;
+    }
+
+    /**
+     * @param Model $model
+     * @return $this
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function setModel(Model $model): ImportServiceInterface
     {
         $this->model = $model;
 
@@ -109,7 +145,7 @@ class ImportService extends BaseObject
      * @param string $scenario
      * @return ImportService
      */
-    public function setValidationScenario(string $scenario): self
+    public function setValidationScenario(string $scenario): ImportServiceInterface
     {
         $this->validationScenario = $scenario;
 
@@ -117,11 +153,12 @@ class ImportService extends BaseObject
     }
 
     /**
-     * @param UploadedFile $file
-     * @param Model $model
+     * @param \yii\web\UploadedFile $file
+     * @param \yii\base\Model $model
      * @return bool
+     * @throws \yii\base\Exception
      */
-    public function uploadImportFile(UploadedFile $file, Model $model)
+    public function uploadImportFile(UploadedFile $file, Model $model): bool
     {
         $class = explode('\\', get_class($model));
         $path = Yii::getAlias($this->tmpPath);
@@ -143,7 +180,7 @@ class ImportService extends BaseObject
     /**
      * @return string
      */
-    public function getUploadedImportFile()
+    public function getUploadedImportFile(): string
     {
         $class = explode('\\', get_class($this->model));
         $path = Yii::getAlias($this->tmpPath);
@@ -156,7 +193,7 @@ class ImportService extends BaseObject
     }
 
     /**
-     * @return ResultImportInterface
+     * @inheritDoc
      */
     public function import(): ResultImportInterface
     {
@@ -169,16 +206,16 @@ class ImportService extends BaseObject
     }
 
     /**
-     * @return bool
-     * @throws Exception
+     * @inheritDoc
+     * @throws \yii\db\Exception
      */
     public function importBatch(): bool
     {
         if (!$this->adapter) {
-            throw new Exception('Adapter must be set');
+            throw new InvalidConfigException('Adapter must be set');
         }
         if (!$this->model instanceof ActiveRecord && !YII_ENV_TEST) {
-            throw new Exception('Model must be instance of ' . ActiveRecord::class);
+            throw new InvalidConfigException('Model must be instance of ' . ActiveRecord::class);
         }
 
         // set progress data from last result batch
@@ -187,13 +224,22 @@ class ImportService extends BaseObject
         }
         $behaviors = array_keys($this->model->getBehaviors());
         if ($rows = $this->adapter->getBatchData()) {
-            $transaction = Yii::$app->db->beginTransaction();
+            $transaction = null;
+            if (!YII_ENV_TEST) {
+                $transaction = Yii::$app->db->beginTransaction();
+            }
             foreach ($rows as $row) {
+                if (empty($row)) {
+                    $this->getResult()->addCount(ResultImportInterface::SKIP_COUNTER);
+                    $this->getResult()->increaseProgressDone();
+                    continue;
+                }
+
                 $existsModelConditions = [];
                 /** @var Model|ActiveRecord $model */
                 $model = clone $this->model;
                 // some behaviors can be detached for the original model
-                // so detach its for cloned model
+                // so detach it for cloned model
                 foreach ($model->getBehaviors() as $behavior => $config) {
                     if (!in_array($behavior, $behaviors)) {
                         $model->detachBehavior($behavior);
@@ -204,7 +250,7 @@ class ImportService extends BaseObject
                     $mapAttributeModel = $this->map[$column] ?? new MapAttribute();
 
                     if ($mapAttributeModel->attribute) {
-                        $mapAttributeModel->setValue($model, $value);
+                        $mapAttributeModel->setValue($model, $value); // set model attributes with value casting
                         // if attribute is identity
                         if ($mapAttributeModel->isIdentity()) {
                             // get attribute after value casting
@@ -239,7 +285,9 @@ class ImportService extends BaseObject
                 $model = $mapAttributeModel = $existsModelConditions = null;
                 $this->getResult()->increaseProgressDone();
             }
-            $transaction->commit();
+            if ($transaction) {
+                $transaction->commit();
+            }
             $transaction = null;
             $rows = null;
 
@@ -253,15 +301,22 @@ class ImportService extends BaseObject
 
             return true;
         } else {
-            // something is wrong...
-            $this->getResult()->setProgressDone($this->getResult()->getProgressTotal());
+            // all batches done, but not all rows is processed
+            // this happens when additional styles (validators) are assigned to cells, but there is no data in them
+            if ($this->getResult()->getProgressDone() < $this->getResult()->getProgressTotal()) {
+                $skipped = $this->getResult()->getProgressTotal() - $this->getResult()->getProgressDone();
+                $this->getResult()->addCount(ResultImportInterface::SKIP_COUNTER, $skipped);
+                $this->getResult()->setProgressDone($this->getResult()->getProgressTotal());
+                $this->getResult()->setBatch($this->adapter->getProgress());
+            }
         }
 
         return false;
     }
 
     /**
-     * @return ResultImportInterface
+     * @return \elfuvo\import\result\ResultImportInterface
+     * @throws \yii\base\InvalidConfigException
      */
     public function getResult(): ResultImportInterface
     {
@@ -275,5 +330,13 @@ class ImportService extends BaseObject
         }
 
         return $this->result;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCustomCasters(): array
+    {
+        return $this->casters;
     }
 }

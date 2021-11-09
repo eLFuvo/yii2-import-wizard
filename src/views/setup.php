@@ -7,7 +7,7 @@
  */
 
 use elfuvo\import\assets\ImportSetupAsset;
-use elfuvo\import\MapAttribute;
+use elfuvo\import\models\MapAttribute;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -17,7 +17,8 @@ use yii\widgets\ActiveForm;
 /** @var array $attributes */
 /** @var array $attributeOptions */
 /** @var int $startRowIndex */
-/** @var \elfuvo\import\MapAttribute[] $mapAttribute */
+/** @var MapAttribute[] $mapAttribute */
+/** @var string[] $casterList */
 
 $this->title = Yii::t('import-wizard', 'Import settings');
 
@@ -91,7 +92,7 @@ ImportSetupAsset::register($this);
                             $model,
                             '[' . $column . ']castTo'
                         )->dropDownList(
-                            MapAttribute::getCastList(),
+                            $casterList,
                             [
                                 'class' => 'form-control cast-to',
                             ]

@@ -42,4 +42,5 @@ return [
     'Choose property of item' => 'Выберите св-во элемента',
     'Cast value to' => 'Преобразовать значение',
     'Item identity' => 'Идентификатор элемента',
+    'Extract value from brackets' => 'Извлечь значение из скобок',
 ];

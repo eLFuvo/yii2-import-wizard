@@ -44,6 +44,7 @@ class AdapterFabricDefault extends BaseObject implements AdapterFabricInterface
      * @param string $filename
      * @return AdapterImportInterface
      * @throws AdapterImportException
+     * @throws \yii\base\InvalidConfigException
      */
     public function create(string $filename): AdapterImportInterface
     {

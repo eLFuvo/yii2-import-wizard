@@ -25,11 +25,11 @@ class FileContinuesResultImport extends AbstractResultImport
     public $pointerPath = '@runtime/import';
 
     /**
-     * @param array $list
+     * @param array $batch
      */
-    public function setBatch($list): void
+    public function setBatch($batch): void
     {
-        $this->batch = $list;
+        $this->batch = $batch;
         $path = Yii::getAlias($this->pointerPath);
         if (!is_dir($path)) {
             FileHelper::createDirectory($path);

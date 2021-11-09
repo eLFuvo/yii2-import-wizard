@@ -11,6 +11,8 @@ namespace elfuvo\import\tests\app\controllers;
 use elfuvo\import\actions\ProgressAction;
 use elfuvo\import\actions\SetupAction;
 use elfuvo\import\actions\UploadFileAction;
+use elfuvo\import\models\MapAttribute;
+use elfuvo\import\services\BracketValueCaster;
 use elfuvo\import\tests\app\models\Review;
 use yii\web\Controller;
 use yii\web\ErrorAction;
@@ -36,10 +38,56 @@ class DefaultController extends Controller
                 'nextAction' => 'setup-import',
                 'progressAction' => 'progress',
             ],
+            // action with predefined map
+            'upload-file-import-map' => [
+                'class' => UploadFileAction::class,
+                'model' => new Review([
+                    'language' => 'ru',
+                    'hidden' => Review::HIDDEN_NO,
+                ]),
+                'view' => '@root/src/views/upload-file',
+                'startRowIndex' => 2,
+                'attributeMap' => [
+                    new MapAttribute([
+                        'column' => 'A',
+                        'attribute' => 'b24StationId',
+                        'castTo' => BracketValueCaster::class,
+                    ]),
+                    new MapAttribute([
+                        'column' => 'B',
+                        'attribute' => 'title',
+                        'castTo' => MapAttribute::TYPE_STRING,
+                        'identity' => 1,
+                    ]),
+                    new MapAttribute([
+                        'column' => 'C',
+                        'attribute' => 'author',
+                        'castTo' => MapAttribute::TYPE_STRING,
+                    ]),
+                    new MapAttribute([
+                        'column' => 'D',
+                        'attribute' => 'text',
+                        'castTo' => MapAttribute::TYPE_STRING,
+                    ]),
+                    new MapAttribute([
+                        'column' => 'E',
+                        'attribute' => 'rating',
+                        'castTo' => MapAttribute::TYPE_FLOAT,
+                    ]),
+                    new MapAttribute([
+                        'column' => 'F',
+                        'attribute' => 'publishAt',
+                        'castTo' => MapAttribute::TYPE_DATETIME,
+                    ]),
+                ],
+                'nextAction' => 'setup-import',
+                'progressAction' => 'progress',
+            ],
             'setup-import' => [
                 'class' => SetupAction::class,
                 'view' => '@root/src/views/setup',
                 'model' => new Review([
+                    'language' => 'ru',
                     'hidden' => Review::HIDDEN_YES,
                 ]),
                 'scenario' => Review::SCENARIO_DEFAULT,

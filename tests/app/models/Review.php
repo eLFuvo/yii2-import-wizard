@@ -40,6 +40,11 @@ class Review extends Model
     public $id;
 
     /**
+     * @var int
+     */
+    public $b24StationId;
+
+    /**
      * @var string
      */
     public $title;
@@ -89,8 +94,8 @@ class Review extends Model
     public function rules()
     {
         return [
-            [['hidden'], 'integer'],
-            [['author', 'title', 'text', 'rating'], 'required'],
+            [['hidden', 'b24StationId'], 'integer'],
+            [['b24StationId', 'author', 'title', 'text', 'rating'], 'required'],
             [['text'], 'string'],
             [['rating',], 'double'],
             [['publishAt', 'createdAt', 'updatedAt'], 'safe'],
@@ -146,5 +151,14 @@ class Review extends Model
         }
 
         return null;
+    }
+
+    /**
+     *
+     */
+    public static function deleteAll()
+    {
+        Yii::$app->cache->delete(self::CACHE_KEY);
+        self::$existsModelList = null;
     }
 }
