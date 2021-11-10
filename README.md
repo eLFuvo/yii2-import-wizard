@@ -15,9 +15,10 @@
     + [Upload import file action with pre-defined attribute map](#upload-import-file-action-with-pre-defined-attribute-map)
     + [Import setup action](#import-setup-action)
     + [Current progress action](#current-progress-action)
-[Queue job](#queue-job)
-[Import link button](#import-link-button)
-[Additional notes](#additional-notes)
+
+[Queue job](#queue-job)<br />
+[Import link button](#import-link-button)<br />
+[Additional notes](#additional-notes)<br />
 [Screenshots](#screenshots)
 
 ## Requirements
