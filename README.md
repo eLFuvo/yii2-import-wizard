@@ -148,7 +148,6 @@ If you are using attribute map, that you don't need configure setup action. Impo
                     'language' => 'ru',
                     'hidden' => Review::HIDDEN_NO,
                 ]),
-                'view' => '@root/src/views/upload-file',
                 'startRowIndex' => 2,
                 // can be callable function that return array of MapAttribute models
                 // first argument for that function is first row from import file
