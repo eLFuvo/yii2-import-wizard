@@ -80,7 +80,6 @@ class DefaultController extends Controller
                         'castTo' => MapAttribute::TYPE_DATETIME,
                     ]),
                 ],
-                'nextAction' => 'setup-import',
                 'progressAction' => 'progress',
             ],
             'setup-import' => [

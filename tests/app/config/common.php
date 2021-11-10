@@ -47,7 +47,7 @@ return [
                 'class' => \yii\web\Request::class,
                 'enableCookieValidation' => false,
                 'enableCsrfValidation' => false,
-            ]
+            ],
         ],
     ],
     'modules' => [],

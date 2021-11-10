@@ -8,6 +8,7 @@
 
 namespace elfuvo\import\actions;
 
+use Closure;
 use elfuvo\import\adapter\AdapterFabricInterface;
 use elfuvo\import\exception\AdapterImportException;
 use elfuvo\import\ImportJob;
@@ -90,7 +91,7 @@ class SetupAction extends Action
     {
         parent::init();
 
-        if (is_callable($this->model)) {
+        if ($this->model instanceof Closure) {
             $this->model = call_user_func($this->model);
         }
 

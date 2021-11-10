@@ -102,6 +102,10 @@ class UploadFileAction extends Action
     {
         parent::init();
 
+        if ($this->model instanceof Closure) {
+            $this->model = call_user_func($this->model);
+        }
+
         if (!$this->model) {
             throw new InvalidConfigException('Model property must be set');
         }
