@@ -67,6 +67,11 @@ class ImportService extends BaseObject implements ImportServiceInterface
     protected $validationScenario = Model::SCENARIO_DEFAULT;
 
     /**
+     * @var null
+     */
+    protected $importHeader = null;
+
+    /**
      * ImportService constructor.
      * @param ResultImportInterface $result
      * @param array $config
@@ -217,6 +222,7 @@ class ImportService extends BaseObject implements ImportServiceInterface
         if (!$this->model instanceof ActiveRecord && !YII_ENV_TEST) {
             throw new InvalidConfigException('Model must be instance of ' . ActiveRecord::class);
         }
+        $header = $this->getImportHeader();
 
         // set progress data from last result batch
         if ($progress = $this->getResult()->getLastBatch()) {
@@ -250,7 +256,8 @@ class ImportService extends BaseObject implements ImportServiceInterface
                     $mapAttributeModel = $this->map[$column] ?? new MapAttribute();
 
                     if ($mapAttributeModel->attribute) {
-                        $mapAttributeModel->setValue($model, $value); // set model attributes with value casting
+                        // set model attributes with value casting
+                        $mapAttributeModel->setValue($model, $value, $header[$column] ?? null);
                         // if attribute is identity
                         if ($mapAttributeModel->isIdentity()) {
                             // get attribute after value casting
@@ -338,5 +345,16 @@ class ImportService extends BaseObject implements ImportServiceInterface
     public function getCustomCasters(): array
     {
         return $this->casters;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getImportHeader(): array
+    {
+        if (is_null($this->importHeader)) {
+            $this->importHeader = $this->adapter->getHeaderData();
+        }
+        return (array)$this->importHeader;
     }
 }

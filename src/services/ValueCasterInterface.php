@@ -14,6 +14,14 @@ namespace elfuvo\import\services;
 interface ValueCasterInterface
 {
     /**
+     * set column label from header
+     *
+     * @param string $label
+     * @return void
+     */
+    public function setHeaderLabel(string $label);
+
+    /**
      * @param string $attribute
      * @param $value
      * @return string|int|bool|null

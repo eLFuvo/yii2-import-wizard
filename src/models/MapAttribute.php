@@ -78,13 +78,6 @@ class MapAttribute extends Model
     public $castTo = self::TYPE_STRING;
 
     /**
-     * setModel?
-     *
-     * @var Model
-     */
-    public $model;
-
-    /**
      * @return array
      */
     public function rules(): array
@@ -174,11 +167,11 @@ class MapAttribute extends Model
     /**
      * @param \yii\base\Model $model
      * @param $value
-     * @throws \yii\base\InvalidConfigException
+     * @param string|null $label
      */
-    public function setValue(Model $model, $value)
+    public function setValue(Model $model, $value, string $label = null)
     {
-        $model->setAttributes([$this->attribute => $this->typecastValue($value, $this->castTo)]);
+        $model->setAttributes([$this->attribute => $this->typecastValue($value, $this->castTo, $label)]);
     }
 
     /**
@@ -217,7 +210,7 @@ class MapAttribute extends Model
      * @return bool|float|int|string|null typecast result.
      * @throws \yii\base\InvalidConfigException
      */
-    protected function typecastValue($value, $type)
+    protected function typecastValue($value, $type, string $label = null)
     {
         if (is_scalar($type)) {
             if (is_object($value) && method_exists($value, '__toString')) {
@@ -245,6 +238,9 @@ class MapAttribute extends Model
                     if (class_exists($type)) {
                         /** @var ValueCasterInterface $caster */
                         $caster = Instance::ensure($type, ValueCasterInterface::class);
+                        if ($label) {
+                            $caster->setHeaderLabel($label);
+                        }
 
                         return $caster->cast($this->attribute, $value);
                     }

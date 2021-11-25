@@ -13,7 +13,7 @@ use Yii;
 /**
  *
  */
-class BracketValueCaster implements ValueCasterInterface
+class BracketValueCaster extends AbstractValueCaster
 {
     /**
      * @param string $attribute
