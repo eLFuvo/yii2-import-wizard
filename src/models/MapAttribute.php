@@ -171,7 +171,18 @@ class MapAttribute extends Model
      */
     public function setValue(Model $model, $value, string $label = null)
     {
-        $model->setAttributes([$this->attribute => $this->typecastValue($value, $this->castTo, $label)]);
+        if (!in_array($this->castTo, array_keys(self::AUTO_CASTING_VALIDATORS))
+            && class_exists($this->castTo)) {
+            /** @var ValueCasterInterface $caster */
+            $caster = Instance::ensure($this->castTo, ValueCasterInterface::class);
+            if ($label) {
+                $caster->setHeaderLabel($label);
+            }
+
+            $caster->cast($model, $this->attribute, $value);
+        } else {
+            $model->setAttributes([$this->attribute => $this->typecastValue($value, $this->castTo, $label)]);
+        }
     }
 
     /**
@@ -208,7 +219,7 @@ class MapAttribute extends Model
      * @param mixed $value value to be type-casted.
      * @param string|callable $type type name or typecast callable.
      * @return bool|float|int|string|null typecast result.
-     * @throws \yii\base\InvalidConfigException
+     * @throws InvalidArgumentException
      */
     protected function typecastValue($value, $type, string $label = null)
     {
@@ -235,16 +246,6 @@ class MapAttribute extends Model
                 case self::TYPE_DATETIME:
                     return $this->castToDateTime($value);
                 default:
-                    if (class_exists($type)) {
-                        /** @var ValueCasterInterface $caster */
-                        $caster = Instance::ensure($type, ValueCasterInterface::class);
-                        if ($label) {
-                            $caster->setHeaderLabel($label);
-                        }
-
-                        return $caster->cast($this->attribute, $value);
-                    }
-
                     throw new InvalidArgumentException('Unsupported type "' . $type . '"');
             }
         }

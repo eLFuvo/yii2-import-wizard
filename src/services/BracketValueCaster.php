@@ -9,6 +9,7 @@
 namespace elfuvo\import\services;
 
 use Yii;
+use yii\base\Model;
 
 /**
  *
@@ -16,17 +17,15 @@ use Yii;
 class BracketValueCaster extends AbstractValueCaster
 {
     /**
-     * @param string $attribute
-     * @param bool|int|string $value
-     * @return bool|int|string|null
+     * @inheritDoc
      */
-    public function cast(string $attribute, $value)
+    public function cast(Model $model, string $attribute, $value)
     {
         if (is_string($value) && preg_match('#\[(.+)\]#', $value, $matches)) {
-            return $matches[1];
+            $value = $matches[1];
         }
 
-        return $value;
+        $model->setAttributes([$attribute => $value]);
     }
 
     /**

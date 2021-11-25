@@ -8,6 +8,8 @@
 
 namespace elfuvo\import\services;
 
+use yii\base\Model;
+
 /**
  *
  */
@@ -22,11 +24,12 @@ interface ValueCasterInterface
     public function setHeaderLabel(string $label);
 
     /**
+     * @param \yii\base\Model $model
      * @param string $attribute
      * @param $value
-     * @return string|int|bool|null
+     * @return void
      */
-    public function cast(string $attribute, $value);
+    public function cast(Model $model, string $attribute, $value);
 
     /**
      * @return string

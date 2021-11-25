@@ -9,6 +9,7 @@
 namespace elfuvo\import\services;
 
 use ReflectionClass;
+use yii\base\Model;
 
 /**
  *
@@ -31,7 +32,7 @@ abstract class AbstractValueCaster implements ValueCasterInterface
     /**
      * @inheritDoc
      */
-    abstract public function cast(string $attribute, $value);
+    abstract public function cast(Model $model, string $attribute, $value);
 
     /**
      * @return string
