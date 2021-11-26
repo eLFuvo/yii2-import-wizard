@@ -69,7 +69,6 @@ class AdapterImportExcel extends AbstractImportAdapter
 
     /**
      * @return array
-     * @throws \PhpOffice\PhpSpreadsheet\Exception|\elfuvo\import\exception\AdapterImportException
      */
     public function getHeaderData(): array
     {
@@ -79,12 +78,13 @@ class AdapterImportExcel extends AbstractImportAdapter
         $spreadsheet = $this->getReader()->load($this->filename);
         $worksheet = $spreadsheet->getActiveSheet();
         $highestColumn = $worksheet->getHighestColumn(); // e.g 'F'
+        $highestColumn = Coordinate::columnIndexFromString($highestColumn);
 
         //get headers (fields)
-        $cols = range('A', $highestColumn);
         $header = [];
-        foreach ($cols as $col) {
-            $header[$col] = $worksheet->getCell($col . '1')->getValue();
+        for ($col = 1; $col <= $highestColumn; $col++) {
+            $columnName = Coordinate::stringFromColumnIndex($col);
+            $header[$columnName] = $worksheet->getCellByColumnAndRow($col, '1')->getValue();
         }
         $this->reader = null;
 
